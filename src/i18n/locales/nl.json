@@ -1,0 +1,172 @@
+{
+  "nav": {
+    "home": "Home",
+    "treatments": "Behandelingen",
+    "about": "Over ons",
+    "prices": "Prijzen",
+    "contact": "Contact",
+    "bookNow": "Afspraak maken"
+  },
+  "home": {
+    "hero": {
+      "tagline": "Premium cosmetische behandelingen",
+      "title": "Ontdek de kunst van natuurlijke schoonheid",
+      "subtitle": "Bij Injection Queen combineert specialist Zainab Haidari medische expertise met artistiek vakmanschap. Persoonlijke aandacht, subtiele verfijning en natuurlijke resultaten staan centraal.",
+      "ctaPrimary": "Afspraak maken",
+      "ctaSecondary": "Onze behandelingen"
+    },
+    "stats": {
+      "clients": "Tevreden klanten",
+      "satisfaction": "Tevredenheidsgarantie",
+      "experience": "Jaar ervaring"
+    },
+    "treatments": {
+      "tagline": "Onze behandelingen",
+      "title": "Behandelingen op maat",
+      "subtitle": "Van lipfillers tot botox - wij helpen je aan een natuurlijke, verfijnde uitstraling",
+      "lipFillers": "Lipfillers",
+      "lipFillersDesc": "Natuurlijk volle lippen met hyaluronzuur fillers",
+      "forehead": "Voorhoofdrimpels",
+      "foreheadDesc": "Frisse uitstraling met botox behandeling",
+      "chin": "Kin fillers",
+      "chinDesc": "Definieerde kin voor een mooi profiel",
+      "crowsFeet": "Kraaienpootjes",
+      "crowsFeetDesc": "Jeugdige blik met gerichte botox",
+      "moreInfo": "Meer info"
+    },
+    "about": {
+      "tagline": "Over ons",
+      "title": "Cosmetische geneeskunde met aandacht",
+      "description": "Bij Injection Queen vinden wij het belangrijk te luisteren naar de wensen van de cliënt en hierin ook eerlijk advies over te geven. Onze focus ligt op schoonheid en puurheid.",
+      "description2": "Elke behandeling wordt uitgevoerd door onze BIG-geregistreerde specialist Zainab Haidari, met oog voor natuurlijke resultaten en medische veiligheid.",
+      "cta": "Lees meer over ons"
+    },
+    "locations": {
+      "tagline": "Locaties",
+      "title": "Vind ons in Amsterdam",
+      "amsterdam": "Amsterdam",
+      "amsterdamAddress": "Pieter Calandlaan 1193, 1069 SE Amsterdam",
+      "spijkenisse": "Spijkenisse",
+      "comingSoon": "Binnenkort beschikbaar"
+    }
+  },
+  "treatmentsPage": {
+    "title": "Onze behandelingen",
+    "subtitle": "Van Botox tot fillers - wij helpen je aan een natuurlijke, verfijnde uitstraling. Elke behandeling wordt uitgevoerd door onze BIG-geregistreerde specialist.",
+    "categories": {
+      "botox": "Botox",
+      "fillers": "Fillers",
+      "other": "Overige"
+    },
+    "cta": "Bekijk alle behandelingen"
+  },
+  "contactPage": {
+    "title": "Neem contact op",
+    "subtitle": "Wij staan klaar om al je vragen te beantwoorden. Vrijblijvend adviesgesprek om samen te kijken naar de mogelijkheden.",
+    "infoTitle": "Contactgegevens",
+    "phone": "Telefoon",
+    "email": "E-mail",
+    "hours": "Openingstijden",
+    "whatsapp": "WhatsApp",
+    "weekdays": "Maandag t/m vrijdag",
+    "weekend": "Zaterdag & zondag",
+    "faq": {
+      "title": "Veelgestelde vragen",
+      "reschedule": {
+        "q": "Hoe kan ik een afspraak verzetten?",
+        "a": "U kunt uw afspraak tot 24 uur van tevoren kosteloos verzetten via telefoon of e-mail."
+      },
+      "consult": {
+        "q": "Is het consult vrijblijvend?",
+        "a": "Ja, het consult is volledig vrijblijvend. Een behandeling is nooit verplicht."
+      },
+      "duration": {
+        "q": "Hoe lang duurt een behandeling?",
+        "a": "De meeste behandelingen duren tussen de 15 en 30 minuten."
+      }
+    },
+    "form": {
+      "title": "Stuur ons een bericht",
+      "name": "Naam",
+      "namePlaceholder": "Je naam",
+      "email": "E-mail",
+      "emailPlaceholder": "je@email.nl",
+      "phone": "Telefoon",
+      "phonePlaceholder": "+31 6 12345678",
+      "message": "Bericht",
+      "messagePlaceholder": "Waar kunnen we je mee helpen?",
+      "submit": "Verstuur bericht",
+      "success": {
+        "title": "Bedankt!",
+        "message": "We nemen binnen 24 uur contact met je op."
+      }
+    }
+  },
+  "aboutPage": {
+    "title": "Over Injection Queen",
+    "subtitle": "Bij Injection Queen vinden wij het belangrijk te luisteren naar de wensen van de cliënt en hierin ook eerlijk advies over te geven. Onze focus ligt op schoonheid en puurheid.",
+    "mission": {
+      "title": "Cosmetische geneeskunde met aandacht",
+      "p1": "Bij Injection Queen draait cosmetische geneeskunde om aandacht, deskundigheid en zorgvuldigheid. Vanaf het moment dat je onze kliniek binnenstapt, staat een rustige en professionele sfeer centraal.",
+      "p2": "We combineren medische kennis met oog voor esthetiek en werken met een duidelijke visie: natuurlijke resultaten, veilige behandelingen en eerlijk advies."
+    },
+    "approach": {
+      "title": "Onze werkwijze",
+      "subtitle": "Drie pijlers van kwaliteit",
+      "attention": {
+        "title": "Persoonlijke aandacht",
+        "desc": "Elke behandeling begint met luisteren. We nemen de tijd om je wensen te bespreken en kijken zorgvuldig naar je gezicht, mimiek en huidconditie."
+      },
+      "safety": {
+        "title": "Medische veiligheid",
+        "desc": "Cosmetische behandelingen zijn medische handelingen. Daarom werken we volgens medische richtlijnen, in een klinisch ingerichte omgeving."
+      },
+      "results": {
+        "title": "Natuurlijke resultaten",
+        "desc": "Onze focus ligt op verfijning, niet op verandering. We streven naar resultaten die in balans zijn met je gezicht."
+      }
+    },
+    "specialist": {
+      "tagline": "Onze specialist",
+      "title": "Cosmetisch specialist Zainab Haidari",
+      "p1": "Zainab Haidari is BIG-geregistreerd en gespecialiseerd in cosmetische geneeskunde. Na haar opleiding deed zij brede medische ervaring op binnen het ziekenhuis.",
+      "p2": "Haar specialisatie in cosmetische behandelingen verdiepte Zainab door trainingen te volgen bij internationale opleidingscentra in Londen, Parijs, Noorwegen en Bangkok.",
+      "p3": "Met haar ervaring en esthetisch inzicht staat zij aan het roer van Injection Queen, waar zij behandelingen uitvoert met oog voor natuurlijke verhoudingen.",
+      "badges": {
+        "big": "BIG Geregistreerd",
+        "training": "Internationale training"
+      }
+    },
+    "clinic": {
+      "title": "Onze kliniek",
+      "subtitle": "Injection Queen is ingericht als een professionele, medische omgeving waar rust en privacy centraal staan.",
+      "openingHours": "Openingstijden"
+    }
+  },
+  "pricesPage": {
+    "title": "Prijzen",
+    "subtitle": "Transparante prijzen zonder verborgen kosten. Alle behandelingen inclusief consult en nazorg.",
+    "categories": {
+      "botox": "Botox",
+      "fillers": "Fillers",
+      "packages": "Combinatie pakketten"
+    },
+    "cta": {
+      "title": "Maak vandaag nog een afspraak",
+      "subtitle": "Laat onze experts je begeleiden naar een stralend uiterlijk",
+      "button": "Afspraak maken"
+    }
+  },
+  "footer": {
+    "tagline": "Premium cosmetische kliniek in Amsterdam",
+    "treatments": "Behandelingen",
+    "company": "Bedrijf",
+    "contact": "Contact",
+    "hours": "Openingstijden",
+    "followUs": "Volg ons",
+    "copyright": "© 2025 Injection Queen. Alle rechten voorbehouden."
+  },
+  "breadcrumbs": {
+    "home": "Home"
+  }
+}

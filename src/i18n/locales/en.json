@@ -1,0 +1,172 @@
+{
+  "nav": {
+    "home": "Home",
+    "treatments": "Treatments",
+    "about": "About",
+    "prices": "Prices",
+    "contact": "Contact",
+    "bookNow": "Book appointment"
+  },
+  "home": {
+    "hero": {
+      "tagline": "Premium cosmetic treatments",
+      "title": "Discover the art of natural beauty",
+      "subtitle": "At Injection Queen, specialist Zainab Haidari combines medical expertise with artistic craftsmanship. Personal attention, subtle refinement and natural results are central.",
+      "ctaPrimary": "Book appointment",
+      "ctaSecondary": "Our treatments"
+    },
+    "stats": {
+      "clients": "Satisfied clients",
+      "satisfaction": "Satisfaction guarantee",
+      "experience": "Years experience"
+    },
+    "treatments": {
+      "tagline": "Our treatments",
+      "title": "Tailored treatments",
+      "subtitle": "From lip fillers to botox - we help you achieve a natural, refined appearance",
+      "lipFillers": "Lip fillers",
+      "lipFillersDesc": "Naturally full lips with hyaluronic acid fillers",
+      "forehead": "Forehead wrinkles",
+      "foreheadDesc": "Fresh appearance with botox treatment",
+      "chin": "Chin fillers",
+      "chinDesc": "Defined chin for a beautiful profile",
+      "crowsFeet": "Crow's feet",
+      "crowsFeetDesc": "Youthful look with targeted botox",
+      "moreInfo": "More info"
+    },
+    "about": {
+      "tagline": "About us",
+      "title": "Cosmetic medicine with care",
+      "description": "At Injection Queen, we find it important to listen to the client's wishes and give honest advice. Our focus is on beauty and purity.",
+      "description2": "Every treatment is performed by our BIG-registered specialist Zainab Haidari, with attention to natural results and medical safety.",
+      "cta": "Read more about us"
+    },
+    "locations": {
+      "tagline": "Locations",
+      "title": "Find us in Amsterdam",
+      "amsterdam": "Amsterdam",
+      "amsterdamAddress": "Pieter Calandlaan 1193, 1069 SE Amsterdam",
+      "spijkenisse": "Spijkenisse",
+      "comingSoon": "Coming soon"
+    }
+  },
+  "treatmentsPage": {
+    "title": "Our treatments",
+    "subtitle": "From Botox to fillers - we help you achieve a natural, refined appearance. Every treatment is performed by our BIG-registered specialist.",
+    "categories": {
+      "botox": "Botox",
+      "fillers": "Fillers",
+      "other": "Other"
+    },
+    "cta": "View all treatments"
+  },
+  "contactPage": {
+    "title": "Get in touch",
+    "subtitle": "We are ready to answer all your questions. Free consultation to explore the possibilities together.",
+    "infoTitle": "Contact details",
+    "phone": "Phone",
+    "email": "Email",
+    "hours": "Opening hours",
+    "whatsapp": "WhatsApp",
+    "weekdays": "Monday to Friday",
+    "weekend": "Saturday & Sunday",
+    "faq": {
+      "title": "Frequently asked questions",
+      "reschedule": {
+        "q": "How can I reschedule an appointment?",
+        "a": "You can reschedule your appointment up to 24 hours in advance free of charge by phone or email."
+      },
+      "consult": {
+        "q": "Is the consultation free?",
+        "a": "Yes, the consultation is completely free of obligation. Treatment is never mandatory."
+      },
+      "duration": {
+        "q": "How long does a treatment take?",
+        "a": "Most treatments take between 15 and 30 minutes."
+      }
+    },
+    "form": {
+      "title": "Send us a message",
+      "name": "Name",
+      "namePlaceholder": "Your name",
+      "email": "Email",
+      "emailPlaceholder": "you@email.com",
+      "phone": "Phone",
+      "phonePlaceholder": "+31 6 12345678",
+      "message": "Message",
+      "messagePlaceholder": "How can we help you?",
+      "submit": "Send message",
+      "success": {
+        "title": "Thank you!",
+        "message": "We will contact you within 24 hours."
+      }
+    }
+  },
+  "aboutPage": {
+    "title": "About Injection Queen",
+    "subtitle": "At Injection Queen, we find it important to listen to the client's wishes and give honest advice. Our focus is on beauty and purity.",
+    "mission": {
+      "title": "Cosmetic medicine with care",
+      "p1": "At Injection Queen, cosmetic medicine revolves around attention, expertise and care. From the moment you enter our clinic, a calm and professional atmosphere is central.",
+      "p2": "We combine medical knowledge with an eye for aesthetics and work with a clear vision: natural results, safe treatments and honest advice."
+    },
+    "approach": {
+      "title": "Our approach",
+      "subtitle": "Three pillars of quality",
+      "attention": {
+        "title": "Personal attention",
+        "desc": "Every treatment begins with listening. We take time to discuss your wishes and carefully look at your face, expressions and skin condition."
+      },
+      "safety": {
+        "title": "Medical safety",
+        "desc": "Cosmetic treatments are medical procedures. That's why we work according to medical guidelines, in a clinically equipped environment."
+      },
+      "results": {
+        "title": "Natural results",
+        "desc": "Our focus is on refinement, not change. We strive for results that are in balance with your face."
+      }
+    },
+    "specialist": {
+      "tagline": "Our specialist",
+      "title": "Cosmetic specialist Zainab Haidari",
+      "p1": "Zainab Haidari is BIG-registered and specialized in cosmetic medicine. After her training, she gained broad medical experience in the hospital.",
+      "p2": "Her specialization in cosmetic treatments was deepened by following training at international training centers in London, Paris, Norway and Bangkok.",
+      "p3": "With her experience and aesthetic insight, she is at the helm of Injection Queen, where she performs treatments with an eye for natural proportions.",
+      "badges": {
+        "big": "BIG Registered",
+        "training": "International training"
+      }
+    },
+    "clinic": {
+      "title": "Our clinic",
+      "subtitle": "Injection Queen is set up as a professional, medical environment where calm and privacy are central.",
+      "openingHours": "Opening hours"
+    }
+  },
+  "pricesPage": {
+    "title": "Prices",
+    "subtitle": "Transparent prices without hidden costs. All treatments include consultation and aftercare.",
+    "categories": {
+      "botox": "Botox",
+      "fillers": "Fillers",
+      "packages": "Combination packages"
+    },
+    "cta": {
+      "title": "Book an appointment today",
+      "subtitle": "Let our experts guide you to a radiant appearance",
+      "button": "Book appointment"
+    }
+  },
+  "footer": {
+    "tagline": "Premium cosmetic clinic in Amsterdam",
+    "treatments": "Treatments",
+    "company": "Company",
+    "contact": "Contact",
+    "hours": "Opening hours",
+    "followUs": "Follow us",
+    "copyright": "© 2025 Injection Queen. All rights reserved."
+  },
+  "breadcrumbs": {
+    "home": "Home"
+  }
+}

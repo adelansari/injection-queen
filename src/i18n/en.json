@@ -1,0 +1,73 @@
+{
+  "nav": {
+    "home": "Home",
+    "treatments": "Treatments",
+    "about": "About us",
+    "prices": "Prices",
+    "contact": "Contact",
+    "bookNow": "Book appointment"
+  },
+  "home": {
+    "hero": {
+      "tagline": "Let wrinkles disappear and muscles relax",
+      "title": "Your beauty is our priority",
+      "subtitle": "Experience the perfect balance between natural beauty and medical expertise. Our BIG-registered doctors create results that enhance your unique radiance.",
+      "ctaPrimary": "Free Consultation",
+      "ctaSecondary": "Our Treatments"
+    },
+    "stats": {
+      "clients": "New clients every year",
+      "satisfaction": "Satisfaction guarantee",
+      "experience": "Years of experience"
+    },
+    "treatments": {
+      "title": "Discover our treatments",
+      "subtitle": "From Botox to fillers - we help you achieve a natural, refined appearance",
+      "lipFillers": "Lip fillers",
+      "lipFillersDesc": "Naturally full lips",
+      "forehead": "Forehead Botox",
+      "foreheadDesc": "Refreshing appearance",
+      "chin": "Chin fillers",
+      "chinDesc": "Harmony in your face",
+      "crowsFeet": "Crow's feet",
+      "crowsFeetDesc": "Youthful eye look",
+      "moreInfo": "More info"
+    },
+    "about": {
+      "tagline": "About Us",
+      "title": "Cosmetic specialist Zainab Haidari",
+      "description": "Zainab Haidari is BIG-registered and specialized in cosmetic medicine. After her training, she gained broad medical experience in the hospital, working in various departments.",
+      "description2": "She deepened her specialization in cosmetic treatments through training at international training centers in London, Paris, Norway and Bangkok.",
+      "cta": "Get to know us"
+    },
+    "locations": {
+      "tagline": "Locations",
+      "title": "Visit our clinic",
+      "amsterdam": "Amsterdam",
+      "amsterdamAddress": "Pieter Calandlaan 1193, 1069 SE Amsterdam",
+      "spijkenisse": "Spijkenisse",
+      "comingSoon": "Coming soon"
+    }
+  },
+  "footer": {
+    "description": "Specialist in Botox and cosmetic fillers. Safe, personal and focused on enhancing your natural beauty.",
+    "links": "Links",
+    "treatments": "Treatments",
+    "contact": "Contact",
+    "tagline": "Because you deserve it, queen/king.",
+    "copyright": "© {{year}} Injection Queen. All rights reserved.",
+    "privacy": "Privacy policy",
+    "terms": "Terms & conditions"
+  },
+  "booking": {
+    "title": "Book appointment",
+    "subtitle": "Fill in the form and we will contact you within 24 hours",
+    "name": "Name",
+    "email": "Email",
+    "phone": "Phone",
+    "treatment": "Treatment",
+    "message": "Message",
+    "submit": "Send request",
+    "success": "Thank you! We will contact you within 24 hours."
+  }
+}

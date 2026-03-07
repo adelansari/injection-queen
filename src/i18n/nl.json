@@ -1,0 +1,73 @@
+{
+  "nav": {
+    "home": "Home",
+    "treatments": "Behandelingen",
+    "about": "Over ons",
+    "prices": "Prijzen",
+    "contact": "Contact",
+    "bookNow": "Afspraak maken"
+  },
+  "home": {
+    "hero": {
+      "tagline": "Laat rimpels verdwijnen en spieren ontspannen",
+      "title": "Jouw schoonheid is onze prioriteit",
+      "subtitle": "Ervaar de perfecte balans tussen natuurlijke schoonheid en medische expertise. Onze BIG-geregistreerde artsen creëren resultaten die jouw unieke uitstraling versterken.",
+      "ctaPrimary": "Gratis Consult",
+      "ctaSecondary": "Onze Behandelingen"
+    },
+    "stats": {
+      "clients": "Nieuwe klanten elk jaar",
+      "satisfaction": "Tevredenheidsgarantie",
+      "experience": "Jaar ervaring"
+    },
+    "treatments": {
+      "title": "Ontdek onze behandelingen",
+      "subtitle": "Van Botox tot fillers - wij helpen je aan een natuurlijke, verfijnde uitstraling",
+      "lipFillers": "Lipfillers",
+      "lipFillersDesc": "Natuurlijk volle lippen",
+      "forehead": "Voorhoofd Botox",
+      "foreheadDesc": "Verfrissende uitstraling",
+      "chin": "Kin Fillers",
+      "chinDesc": "Harmonie in je gelaat",
+      "crowsFeet": "Kraaienpootjes",
+      "crowsFeetDesc": "Jeugdige oogopslag",
+      "moreInfo": "Meer info"
+    },
+    "about": {
+      "tagline": "Over Ons",
+      "title": "Cosmetisch specialist Zainab Haidari",
+      "description": "Zainab Haidari is BIG-geregistreerd en gespecialiseerd in cosmetische geneeskunde. Na haar opleiding deed zij brede medische ervaring op binnen het ziekenhuis, waar zij werkte op verschillende afdelingen.",
+      "description2": "Haar specialisatie in cosmetische behandelingen verdiepte Zainab door trainingen te volgen bij internationale opleidingscentra in Londen, Parijs, Noorwegen en Bangkok.",
+      "cta": "Leer ons kennen"
+    },
+    "locations": {
+      "tagline": "Locaties",
+      "title": "Bezoek onze kliniek",
+      "amsterdam": "Amsterdam",
+      "amsterdamAddress": "Pieter Calandlaan 1193, 1069 SE Amsterdam",
+      "spijkenisse": "Spijkenisse",
+      "comingSoon": "Binnenkort geopend"
+    }
+  },
+  "footer": {
+    "description": "Specialist in Botox en cosmetische fillers. Veilig, persoonlijk en gericht op het versterken van jouw natuurlijke schoonheid.",
+    "links": "Links",
+    "treatments": "Behandelingen",
+    "contact": "Contact",
+    "tagline": "Because you deserve it, queen/king.",
+    "copyright": "© {{year}} Injection Queen. Alle rechten voorbehouden.",
+    "privacy": "Privacy policy",
+    "terms": "Algemene voorwaarden"
+  },
+  "booking": {
+    "title": "Afspraak maken",
+    "subtitle": "Vul het formulier in en we nemen binnen 24 uur contact met je op",
+    "name": "Naam",
+    "email": "E-mail",
+    "phone": "Telefoon",
+    "treatment": "Behandeling",
+    "message": "Bericht",
+    "submit": "Verstuur aanvraag",
+    "success": "Bedankt! We nemen binnen 24 uur contact met je op."
+  }
+}
