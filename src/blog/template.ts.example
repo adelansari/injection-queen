@@ -1,0 +1,66 @@
+/**
+ * Blog Post Template
+ * 
+ * Copy this file to create a new blog post:
+ * 1. Copy to: posts/YYYY-MM-DD-hh-mm-your-slug.ts
+ * 2. Update all fields below
+ * 3. Import and add to registry.ts
+ * 
+ * The datetime field creates unique URLs like: /blog/2026-02-25-10-00
+ */
+
+import { BlogPost } from '../types';
+
+export const post: BlogPost = {
+  id: '15', // Increment from highest existing
+  slug: 'your-post-slug-here',
+  date: '2026-03-08', // ISO date
+  datetime: '2026-03-08-14-30', // Date + time for unique URL
+  title: 'Your Dutch Title Here',
+  titleEn: 'Your English Title Here',
+  excerpt: 'Dutch excerpt (2-3 sentences)',
+  excerptEn: 'English excerpt (2-3 sentences)',
+  category: 'Botox', // Botox, Fillers, Lipfillers, Skinboosters, etc.
+  author: 'Zainab Haidari',
+  readTime: '5 min',
+  
+  // Images
+  image: '/images/blog/2026-03-08-your-post-slug/featured.jpg',
+  images: [
+    '/images/blog/2026-03-08-your-post-slug/featured.jpg',
+    '/images/blog/2026-03-08-your-post-slug/image-2.jpg',
+  ],
+  
+  // Content in Markdown format
+  content: `## Introduction in Dutch
+
+Write your content here using Markdown:
+
+**Bold text** for emphasis
+
+• Bullet points
+• With important info
+
+## Section Header
+
+Regular paragraphs with [links](https://example.com).
+
+More paragraphs here...`,
+  
+  contentEn: `## Introduction in English
+
+Write your English content here using Markdown:
+
+**Bold text** for emphasis
+
+• Bullet points
+• With important info
+
+## Section Header
+
+Regular paragraphs with [links](https://example.com).
+
+More paragraphs here...`,
+  
+  relatedPosts: ['post-slug-1', 'post-slug-2'], // Optional
+};
