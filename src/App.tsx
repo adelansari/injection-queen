@@ -4,7 +4,6 @@ import { ThemeProvider } from './hooks/useTheme';
 import { Navbar } from './components/Navbar';
 import { Footer } from './sections/Footer';
 import { ScrollToTop } from './components/ScrollToTop';
-import { Breadcrumbs } from './components/Breadcrumbs';
 import { BackToTop } from './components/BackToTop';
 import { Home } from './pages/Home';
 import { OverOns } from './pages/OverOns';
@@ -29,7 +28,6 @@ function App() {
           <div className="min-h-screen bg-white dark:bg-[#0f0f1a] transition-colors">
             <ScrollToTop />
             <Navbar />
-            <Breadcrumbs />
             <main id="main-content">
               <Routes>
                 <Route path="/" element={<Home />} />
