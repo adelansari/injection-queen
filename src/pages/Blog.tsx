@@ -1,30 +1,40 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { Calendar, User, ArrowRight, Search } from 'lucide-react';
+import { Calendar, ArrowRight, Search, Clock } from 'lucide-react';
 import { blogPosts } from '../data/blogPosts';
 import { Breadcrumbs } from '../components/Breadcrumbs';
+import { useTranslation } from 'react-i18next';
 
 export function Blog() {
+  const { t, i18n } = useTranslation();
+  const language = i18n.language;
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
 
   const categories = ['all', ...Array.from(new Set(blogPosts.map(post => post.category)))];
 
   const filteredPosts = blogPosts.filter(post => {
-    const matchesSearch = post.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         post.excerpt.toLowerCase().includes(searchTerm.toLowerCase());
+    const searchContent = language === 'nl' ? post.title : post.titleEn;
+    const excerptContent = language === 'nl' ? post.excerpt : post.excerptEn;
+    const matchesSearch = searchContent.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         excerptContent.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesCategory = selectedCategory === 'all' || post.category === selectedCategory;
     return matchesSearch && matchesCategory;
   });
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    return date.toLocaleDateString('nl-NL', { 
+    return date.toLocaleDateString(language === 'nl' ? 'nl-NL' : 'en-US', { 
       year: 'numeric', 
       month: 'long', 
       day: 'numeric' 
     });
+  };
+
+  const getCategoryLabel = (cat: string) => {
+    if (cat === 'all') return t('blog.allCategories');
+    return t(`blog.categories.${cat}` as const) || cat;
   };
 
   return (
@@ -40,13 +50,13 @@ export function Blog() {
             className="text-center max-w-3xl mx-auto"
           >
             <span className="inline-block px-4 py-1.5 bg-[#c9a961]/10 text-[#c9a961] text-sm font-medium rounded-full mb-4">
-              Blog
+              {t('blog.title')}
             </span>
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-serif font-bold text-[#1a1a2e] dark:text-white mb-6">
               Kennis & Inzichten
             </h1>
             <p className="text-xl text-gray-600 dark:text-gray-300">
-              Ontdek de laatste trends, behandelingen en tips van onze experts
+              {t('blog.subtitle')}
             </p>
           </motion.div>
         </div>
@@ -61,7 +71,7 @@ export function Blog() {
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
               <input
                 type="text"
-                placeholder="Zoek in artikelen..."
+                placeholder={t('blog.searchPlaceholder')}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="w-full pl-12 pr-4 py-3 bg-gray-50 dark:bg-[#1a1a2e] border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-[#c9a961] focus:border-transparent"
@@ -80,7 +90,7 @@ export function Blog() {
                       : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200'
                   }`}
                 >
-                  {category === 'all' ? 'Alle' : category}
+                  {getCategoryLabel(category)}
                 </button>
               ))}
             </div>
@@ -93,7 +103,8 @@ export function Blog() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {filteredPosts.length === 0 ? (
             <div className="text-center py-16">
-              <p className="text-gray-500 text-lg">Geen artikelen gevonden</p>
+              <p className="text-gray-500 text-lg mb-2">{t('blog.noResults')}</p>
+              <p className="text-gray-400">{t('blog.tryAdjusting')}</p>
             </div>
           ) : (
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -107,10 +118,10 @@ export function Blog() {
                 >
                   {/* Image */}
                   <div className="relative h-48 overflow-hidden">
-                    {post.image ? (
+                    {post.images && post.images.length > 0 ? (
                       <img
-                        src={post.image}
-                        alt={post.title}
+                        src={post.images[0]}
+                        alt={language === 'nl' ? post.title : post.titleEn}
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                       />
                     ) : (
@@ -120,7 +131,7 @@ export function Blog() {
                     )}
                     <div className="absolute top-4 left-4">
                       <span className="px-3 py-1 bg-[#c9a961] text-white text-xs font-medium rounded-full">
-                        {post.category}
+                        {getCategoryLabel(post.category)}
                       </span>
                     </div>
                   </div>
@@ -128,25 +139,25 @@ export function Blog() {
                   {/* Content */}
                   <div className="p-6">
                     {/* Meta */}
-                    <div className="flex items-center gap-4 text-sm text-gray-500 mb-3">
+                    <div className="flex items-center gap-4 text-sm text-gray-500 mb-3 flex-wrap">
                       <span className="flex items-center gap-1">
                         <Calendar className="w-4 h-4" />
                         {formatDate(post.date)}
                       </span>
                       <span className="flex items-center gap-1">
-                        <User className="w-4 h-4" />
-                        {post.author}
+                        <Clock className="w-4 h-4" />
+                        {post.readTime}
                       </span>
                     </div>
 
                     {/* Title */}
                     <h3 className="text-xl font-bold text-[#1a1a2e] dark:text-white mb-3 group-hover:text-[#c9a961] transition-colors line-clamp-2">
-                      {post.title}
+                      {language === 'nl' ? post.title : post.titleEn}
                     </h3>
 
                     {/* Excerpt */}
                     <p className="text-gray-600 dark:text-gray-400 text-sm mb-4 line-clamp-3">
-                      {post.excerpt}
+                      {language === 'nl' ? post.excerpt : post.excerptEn}
                     </p>
 
                     {/* Read More */}
@@ -154,7 +165,7 @@ export function Blog() {
                       to={`/blog/${post.slug}`}
                       className="inline-flex items-center gap-2 text-[#c9a961] font-medium text-sm group/link"
                     >
-                      Lees verder
+                      {t('blog.readMore')}
                       <ArrowRight className="w-4 h-4 group-hover/link:translate-x-1 transition-transform" />
                     </Link>
                   </div>
