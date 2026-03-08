@@ -29,6 +29,7 @@ export function BackToTop() {
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0, scale: 0.8 }}
+          whileHover={{ scale: 1.1 }}
           onClick={scrollToTop}
           className="fixed bottom-8 right-8 z-50 w-12 h-12 bg-[#c9a961] hover:bg-[#b8944f] text-white rounded-full shadow-lg flex items-center justify-center transition-colors"
           aria-label="Terug naar boven"
