@@ -10,8 +10,8 @@ import { OverOns } from './pages/OverOns';
 import { Behandelingen } from './pages/Behandelingen';
 import { Prijzen } from './pages/Prijzen';
 import { Contact } from './pages/Contact';
-import { Blog } from './pages/Blog';
-import { BlogPost } from './pages/BlogPost';
+import { BlogIndex } from './pages/BlogIndex';
+import { BlogDetail } from './pages/BlogDetail';
 import { Voorhoofdrimpels } from './pages/treatments/Voorhoofdrimpels';
 import { Lippen } from './pages/treatments/Lippen';
 import { Kin } from './pages/treatments/Kin';
@@ -37,8 +37,12 @@ function App() {
                 <Route path="/behandelingen" element={<Behandelingen />} />
                 <Route path="/prijzen" element={<Prijzen />} />
                 <Route path="/contact" element={<Contact />} />
-                <Route path="/blog" element={<Blog />} />
-                <Route path="/blog/:slug" element={<BlogPost />} />
+                
+                {/* Blog Routes - Date-based URLs */}
+                <Route path="/blog" element={<BlogIndex />} />
+                {/* Support both date-based and slug-based URLs */}
+                <Route path="/blog/:datetime" element={<BlogDetail />} />
+                
                 <Route path="/voorhoofdrimpels" element={<Voorhoofdrimpels />} />
                 <Route path="/lippen" element={<Lippen />} />
                 <Route path="/kin" element={<Kin />} />
