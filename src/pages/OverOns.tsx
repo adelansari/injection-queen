@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion';
 import { Shield, Heart, UserCheck, Award, MapPin, Clock, Phone } from 'lucide-react';
+import { Breadcrumbs } from '../components/Breadcrumbs';
 import { useTranslation } from 'react-i18next';
 
 export function OverOns() {
@@ -7,6 +8,7 @@ export function OverOns() {
   
   return (
     <div className="pt-20">
+      <Breadcrumbs />
       {/* Hero */}
       <section className="py-24 bg-gradient-to-br from-[#faf8f5] via-white to-[#e8d5c4]/30 dark:from-[#0f0f1a] dark:via-[#1a1a2e] dark:to-[#1a1a2e]/50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -73,7 +75,7 @@ export function OverOns() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
             <motion.div initial={{ opacity: 0, x: -50 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} className="order-2 lg:order-1">
-              <div className="bg-gradient-to-br from-[#c9a961]/20 to-[#d4a5a5]/20 rounded-3xl p-12 aspect-square flex items-center justify-center">
+              <div className="bg-gradient-to-br from-[#c9a961]/20 to-[#d4a5a5]/20 rounded-3xl p-8 sm:p-12 aspect-square sm:aspect-auto lg:aspect-square flex items-center justify-center max-w-md mx-auto lg:max-w-none">
                 <div className="text-center">
                   <div className="w-32 h-32 mx-auto mb-6 rounded-full bg-white dark:bg-[#1a1a2e] flex items-center justify-center shadow-xl">
                     <UserCheck className="w-16 h-16 text-[#c9a961]" />
