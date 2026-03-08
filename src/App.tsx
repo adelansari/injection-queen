@@ -38,10 +38,9 @@ function App() {
                 <Route path="/prijzen" element={<Prijzen />} />
                 <Route path="/contact" element={<Contact />} />
                 
-                {/* Blog Routes - Date-based URLs */}
+                {/* Blog Routes - Date-based URLs with slug for SEO */}
                 <Route path="/blog" element={<BlogIndex />} />
-                {/* Support both date-based and slug-based URLs */}
-                <Route path="/blog/:datetime" element={<BlogDetail />} />
+                <Route path="/blog/:datetime/:slug" element={<BlogDetail />} />
                 
                 <Route path="/voorhoofdrimpels" element={<Voorhoofdrimpels />} />
                 <Route path="/lippen" element={<Lippen />} />
