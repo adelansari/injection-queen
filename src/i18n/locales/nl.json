@@ -168,5 +168,26 @@
   },
   "breadcrumbs": {
     "home": "Home"
+  },
+  "blog": {
+    "title": "Blog",
+    "subtitle": "Ontdek de nieuwste inzichten over cosmetische behandelingen, huidverzorging en beauty tips van onze specialisten.",
+    "searchPlaceholder": "Zoek artikelen...",
+    "allCategories": "Alle categorieën",
+    "readMore": "Lees meer",
+    "readTime": "Leestijd",
+    "by": "Door",
+    "relatedPosts": "Gerelateerde artikelen",
+    "backToBlog": "Terug naar blog",
+    "share": "Delen",
+    "noResults": "Geen artikelen gevonden",
+    "tryAdjusting": "Probeer je zoekopdracht of filters aan te passen",
+    "categories": {
+      "Botox": "Botox",
+      "Fillers": "Fillers",
+      "Lipfillers": "Lipfillers",
+      "Skinboosters": "Skinboosters",
+      "Informatie": "Informatie"
+    }
   }
 }

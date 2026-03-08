@@ -168,5 +168,26 @@
   },
   "breadcrumbs": {
     "home": "Home"
+  },
+  "blog": {
+    "title": "Blog",
+    "subtitle": "Discover the latest insights on cosmetic treatments, skincare and beauty tips from our specialists.",
+    "searchPlaceholder": "Search articles...",
+    "allCategories": "All categories",
+    "readMore": "Read more",
+    "readTime": "Read time",
+    "by": "By",
+    "relatedPosts": "Related articles",
+    "backToBlog": "Back to blog",
+    "share": "Share",
+    "noResults": "No articles found",
+    "tryAdjusting": "Try adjusting your search or filters",
+    "categories": {
+      "Botox": "Botox",
+      "Fillers": "Fillers",
+      "Lipfillers": "Lip fillers",
+      "Skinboosters": "Skinboosters",
+      "Informatie": "Information"
+    }
   }
 }
