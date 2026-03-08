@@ -31,6 +31,7 @@ export function Navbar() {
   const navItems = [
     { label: t('nav.home'), href: '/' },
     { label: t('nav.treatments'), href: '/behandelingen' },
+    { label: 'Blog', href: '/blog' },
     { label: t('nav.about'), href: '/over-ons' },
     { label: t('nav.prices'), href: '/prijzen' },
     { label: t('nav.contact'), href: '/contact' },

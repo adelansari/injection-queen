@@ -14,6 +14,7 @@ export function Breadcrumbs() {
     'behandelingen': 'Behandelingen',
     'prijzen': 'Prijzen',
     'contact': 'Contact',
+    'blog': 'Blog',
     'lippen': 'Lipfillers',
     'kin': 'Kin fillers',
     'voorhoofdrimpels': 'Voorhoofdrimpels',
