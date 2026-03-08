@@ -1,28 +1,24 @@
+import type { ReactElement } from 'react';
 import { useParams, Link, Navigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Calendar, ArrowLeft, Share2, Facebook, Twitter, Linkedin, Clock } from 'lucide-react';
+import { Calendar, ArrowLeft, Share2, Facebook, Twitter, Linkedin, Clock, ChevronRight, Home } from 'lucide-react';
 import { 
-  getPostByDateTime, 
-  getPostBySlug,
+  getPostByDateTimeAndSlug,
   getRelatedPosts,
   formatDate,
   getPostUrl,
   sortedPosts 
 } from '../blog/registry';
-import { Breadcrumbs } from '../components/Breadcrumbs';
 import { MarkdownRenderer } from '../components/blog/MarkdownRenderer';
 import { useTranslation } from 'react-i18next';
 
 export function BlogDetail() {
-  const { datetime, slug } = useParams<{ datetime?: string; slug?: string }>();
+  const { datetime, slug } = useParams<{ datetime: string; slug: string }>();
   const { t, i18n } = useTranslation();
   const language = i18n.language as 'nl' | 'en';
 
-  // Support both datetime-based and slug-based URLs
-  let post = datetime ? getPostByDateTime(datetime) : undefined;
-  if (!post && slug) {
-    post = getPostBySlug(slug);
-  }
+  // Get post by datetime and slug
+  const post = (datetime && slug) ? getPostByDateTimeAndSlug(datetime, slug) : undefined;
   
   const relatedPosts = post ? getRelatedPosts(post) : [];
 
@@ -34,17 +30,103 @@ export function BlogDetail() {
   const shareTitle = language === 'nl' ? post.title : post.titleEn;
   const content = language === 'nl' ? post.content : post.contentEn;
   const excerpt = language === 'nl' ? post.excerpt : post.excerptEn;
+  const displayTitle = language === 'nl' ? post.title : post.titleEn;
+
+  // Function to render content with inline images
+  const renderContentWithImages = () => {
+    const paragraphs = content.split('\n\n');
+    const images = post.images || [];
+    const result: ReactElement[] = [];
+    let imageIndex = 0;
+
+    paragraphs.forEach((paragraph, idx) => {
+      // Add the paragraph
+      result.push(
+        <div key={`p-${idx}`} className="mb-4">
+          <MarkdownRenderer content={paragraph} />
+        </div>
+      );
+
+      // Insert an image after every 2-3 paragraphs if available
+      if ((idx + 1) % 2 === 0 && imageIndex < images.length) {
+        const img = images[imageIndex];
+        imageIndex++;
+        result.push(
+          <figure key={`img-${idx}`} className="my-8">
+            <div className="rounded-xl overflow-hidden shadow-lg">
+              <img 
+                src={img} 
+                alt={`${displayTitle} - afbeelding ${imageIndex}`}
+                className="w-full h-auto max-h-[500px] object-cover hover:scale-105 transition-transform duration-500"
+              />
+            </div>
+          </figure>
+        );
+      }
+    });
+
+    // Add remaining images at the end if any
+    while (imageIndex < images.length) {
+      const img = images[imageIndex];
+      result.push(
+        <figure key={`img-end-${imageIndex}`} className="my-8">
+          <div className="rounded-xl overflow-hidden shadow-lg">
+            <img 
+              src={img} 
+              alt={`${displayTitle} - afbeelding ${imageIndex + 1}`}
+              className="w-full h-auto max-h-[500px] object-cover hover:scale-105 transition-transform duration-500"
+            />
+          </div>
+        </figure>
+      );
+      imageIndex++;
+    }
+
+    return result;
+  };
 
   return (
     <div className="pt-20">
-      <Breadcrumbs />
+      {/* Custom Breadcrumbs with Blog Title */}
+      <motion.nav 
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="py-4 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto"
+        aria-label="Breadcrumb"
+      >
+        <ol className="flex items-center flex-wrap gap-2 text-sm">
+          <li>
+            <Link 
+              to="/" 
+              className="flex items-center text-gray-500 hover:text-[#c9a961] transition-colors"
+            >
+              <Home className="w-4 h-4" />
+            </Link>
+          </li>
+          <li className="flex items-center">
+            <ChevronRight className="w-4 h-4 text-gray-400 mx-1" />
+            <Link 
+              to="/blog" 
+              className="text-gray-500 hover:text-[#c9a961] transition-colors"
+            >
+              Blog
+            </Link>
+          </li>
+          <li className="flex items-center">
+            <ChevronRight className="w-4 h-4 text-gray-400 mx-1" />
+            <span className="text-[#c9a961] font-medium line-clamp-1 max-w-[300px] sm:max-w-[500px]">
+              {displayTitle}
+            </span>
+          </li>
+        </ol>
+      </motion.nav>
       
       {/* Hero Image */}
       <div className="relative h-[50vh] min-h-[400px]">
         {post.image ? (
           <img
             src={post.image}
-            alt={language === 'nl' ? post.title : post.titleEn}
+            alt={displayTitle}
             className="w-full h-full object-cover"
           />
         ) : (
@@ -63,7 +145,7 @@ export function BlogDetail() {
                 {post.category}
               </span>
               <h1 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-bold text-white mb-4">
-                {language === 'nl' ? post.title : post.titleEn}
+                {displayTitle}
               </h1>
               <div className="flex flex-wrap items-center gap-6 text-white/80">
                 <span className="flex items-center gap-2">
@@ -93,28 +175,10 @@ export function BlogDetail() {
               {excerpt}
             </p>
 
-            {/* Main Content */}
-            <MarkdownRenderer content={content} />
-
-            {/* Additional Images Gallery */}
-            {post.images && post.images.length > 1 && (
-              <div className="my-12">
-                <h2 className="text-2xl font-bold text-[#1a1a2e] dark:text-white mb-6">
-                  {language === 'nl' ? 'Afbeeldingen' : 'Images'}
-                </h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {post.images.slice(1).map((img, idx) => (
-                    <div key={idx} className="rounded-xl overflow-hidden shadow-lg">
-                      <img 
-                        src={img} 
-                        alt={`${language === 'nl' ? post.title : post.titleEn} - image ${idx + 2}`}
-                        className="w-full h-64 object-cover hover:scale-105 transition-transform duration-500"
-                      />
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
+            {/* Main Content with Inline Images */}
+            <div className="prose prose-lg max-w-none dark:prose-invert">
+              {renderContentWithImages()}
+            </div>
 
             {/* CTA */}
             <div className="bg-gradient-to-r from-[#c9a961]/10 to-[#e8d5c4]/10 rounded-2xl p-8 my-12 text-center">
@@ -194,15 +258,20 @@ export function BlogDetail() {
                   to={getPostUrl(relatedPost)}
                   className="group bg-white dark:bg-[#0f0f1a] rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-all"
                 >
-                  <div className="relative h-40 overflow-hidden">
+                  <div className="relative h-48 overflow-hidden bg-gray-100 dark:bg-gray-800">
                     {relatedPost.image ? (
                       <img
                         src={relatedPost.image}
                         alt={language === 'nl' ? relatedPost.title : relatedPost.titleEn}
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                        onError={(e) => {
+                          (e.target as HTMLImageElement).style.display = 'none';
+                        }}
                       />
                     ) : (
-                      <div className="w-full h-full bg-gradient-to-br from-[#c9a961]/20 to-[#d4a5a5]/20" />
+                      <div className="w-full h-full bg-gradient-to-br from-[#c9a961]/20 to-[#d4a5a5]/20 flex items-center justify-center">
+                        <span className="text-4xl">💉</span>
+                      </div>
                     )}
                   </div>
                   <div className="p-4">
