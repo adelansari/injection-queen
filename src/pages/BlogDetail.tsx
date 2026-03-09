@@ -33,91 +33,123 @@ export function BlogDetail() {
   const displayTitle = language === 'nl' ? post.title : post.titleEn;
   const images = post.images || [];
 
-  // Parse content and handle [IMAGE:filename:position] markers
+  // Parse content and handle [IMAGE:filename:position] and [END] markers
   const parseContent = () => {
     const paragraphs = content.split('\n\n');
     const result: ReactElement[] = [];
     let regularImageIndex = 1; // Skip featured image (index 0)
+    
+    // State for collecting side-by-side content
+    let pendingSideBySide: { 
+      imageUrl: string; 
+      position: 'left' | 'right';
+      contentBlocks: string[];
+    } | null = null;
 
-    paragraphs.forEach((paragraph, idx) => {
-      const trimmed = paragraph.trim();
+    const flushSideBySide = () => {
+      if (pendingSideBySide && pendingSideBySide.contentBlocks.length > 0) {
+        const isLeft = pendingSideBySide.position === 'left';
+        result.push(
+          <div key={`sbs-${result.length}`} className="my-8 lg:my-12">
+            <div className="flex flex-col lg:flex-row gap-6 lg:gap-8 items-start">
+              {/* Image - full width on mobile, half on desktop */}
+              <div className={`w-full lg:w-1/2 ${isLeft ? 'lg:order-1' : 'lg:order-2'}`}>
+                <div className="rounded-xl overflow-hidden shadow-lg">
+                  <img 
+                    src={pendingSideBySide.imageUrl} 
+                    alt=""
+                    className="w-full h-auto max-h-[600px] object-contain hover:scale-105 transition-transform duration-500"
+                  />
+                </div>
+              </div>
+              {/* Text content - full width on mobile, half on desktop */}
+              <div className={`w-full lg:w-1/2 ${isLeft ? 'lg:order-2' : 'lg:order-1'}`}>
+                <div className="prose prose-lg dark:prose-invert max-w-none">
+                  {pendingSideBySide.contentBlocks.map((block, idx) => (
+                    <div key={idx} className={idx > 0 ? 'mt-4' : ''}>
+                      <MarkdownRenderer content={block} />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+        pendingSideBySide = null;
+      } else if (pendingSideBySide) {
+        // Has image but no content - render as full-width
+        result.push(
+          <figure key={`img-solo-${result.length}`} className="my-8">
+            <div className="rounded-xl overflow-hidden shadow-lg">
+              <img 
+                src={pendingSideBySide.imageUrl} 
+                alt=""
+                className="w-full h-auto max-h-[600px] object-contain hover:scale-105 transition-transform duration-500"
+              />
+            </div>
+          </figure>
+        );
+        pendingSideBySide = null;
+      }
+    };
+
+    for (let i = 0; i < paragraphs.length; i++) {
+      const trimmed = paragraphs[i].trim();
+      
+      // Check for [END] marker
+      if (trimmed === '[END]') {
+        flushSideBySide();
+        continue;
+      }
       
       // Check for image markers [IMAGE:filename:position]
       const imageMatch = trimmed.match(/^\[IMAGE:([^\]:]+)(?::([^\]]+))?\]$/);
       if (imageMatch) {
         const filename = imageMatch[1];
-        const position = imageMatch[2] || 'full';
+        const position = (imageMatch[2] || 'full') as 'left' | 'right' | 'full';
         const imageUrl = images.find(img => img.includes(filename));
         
         if (imageUrl) {
-          if (position === 'left') {
+          if (position === 'full') {
+            // Full-width image - flush any pending side-by-side first
+            flushSideBySide();
             result.push(
-              <div key={`img-left-${idx}`} className="my-8">
-                <div className="flex flex-col md:flex-row gap-6 items-start">
-                  <div className="md:w-1/2">
-                    <div className="rounded-xl overflow-hidden shadow-lg">
-                      <img 
-                        src={imageUrl} 
-                        alt=""
-                        className="w-full h-64 object-cover hover:scale-105 transition-transform duration-500"
-                      />
-                    </div>
-                  </div>
-                  <div className="md:w-1/2">
-                    {/* Text will be in the next block */}
-                  </div>
-                </div>
-              </div>
-            );
-          } else if (position === 'right') {
-            result.push(
-              <div key={`img-right-${idx}`} className="my-8">
-                <div className="flex flex-col md:flex-row-reverse gap-6 items-start">
-                  <div className="md:w-1/2">
-                    <div className="rounded-xl overflow-hidden shadow-lg">
-                      <img 
-                        src={imageUrl} 
-                        alt=""
-                        className="w-full h-64 object-cover hover:scale-105 transition-transform duration-500"
-                      />
-                    </div>
-                  </div>
-                  <div className="md:w-1/2">
-                    {/* Text will be in the next block */}
-                  </div>
-                </div>
-              </div>
-            );
-          } else {
-            // Full width image
-            result.push(
-              <figure key={`img-full-${idx}`} className="my-8">
+              <figure key={`img-full-${i}`} className="my-8">
                 <div className="rounded-xl overflow-hidden shadow-lg">
                   <img 
                     src={imageUrl} 
                     alt=""
-                    className="w-full h-auto max-h-[500px] object-cover hover:scale-105 transition-transform duration-500"
+                    className="w-full h-auto max-h-[600px] object-contain hover:scale-105 transition-transform duration-500"
                   />
                 </div>
               </figure>
             );
+          } else {
+            // Left or right positioned image - start collecting content
+            flushSideBySide();
+            pendingSideBySide = { imageUrl, position, contentBlocks: [] };
           }
         }
-        return;
+        continue;
       }
 
-      // Regular paragraph
+      // Regular content
       if (trimmed) {
-        result.push(
-          <div key={`p-${idx}`} className="mb-4">
-            <MarkdownRenderer content={trimmed} />
-          </div>
-        );
+        if (pendingSideBySide) {
+          // Collecting content for side-by-side layout
+          pendingSideBySide.contentBlocks.push(trimmed);
+        } else {
+          // Regular standalone content
+          result.push(
+            <div key={`p-${i}`} className="mb-4">
+              <MarkdownRenderer content={trimmed} />
+            </div>
+          );
+        }
       }
 
-      // Insert regular images after every 3rd paragraph if no explicit image markers used
-      if ((idx + 1) % 3 === 0 && regularImageIndex < images.length) {
-        // Check if we haven't used this image in a marker already
+      // Auto-insert images after every 3rd paragraph (only when not collecting side-by-side)
+      if ((i + 1) % 3 === 0 && regularImageIndex < images.length && !pendingSideBySide) {
         const nextImage = images[regularImageIndex];
         const isUsedInMarker = paragraphs.some(p => {
           const m = p.match(/\[IMAGE:([^\]]+)\]/);
@@ -126,12 +158,12 @@ export function BlogDetail() {
         
         if (!isUsedInMarker && nextImage) {
           result.push(
-            <figure key={`img-auto-${idx}`} className="my-8">
+            <figure key={`img-auto-${i}`} className="my-8">
               <div className="rounded-xl overflow-hidden shadow-lg">
                 <img 
                   src={nextImage} 
                   alt={`${displayTitle} - afbeelding ${regularImageIndex}`}
-                  className="w-full h-auto max-h-[500px] object-cover hover:scale-105 transition-transform duration-500"
+                  className="w-full h-auto max-h-[600px] object-contain hover:scale-105 transition-transform duration-500"
                 />
               </div>
             </figure>
@@ -139,7 +171,10 @@ export function BlogDetail() {
           regularImageIndex++;
         }
       }
-    });
+    }
+
+    // Flush any remaining side-by-side content
+    flushSideBySide();
 
     // Add any remaining images that weren't used
     while (regularImageIndex < images.length) {
@@ -156,7 +191,7 @@ export function BlogDetail() {
               <img 
                 src={img} 
                 alt={`${displayTitle} - afbeelding ${regularImageIndex + 1}`}
-                className="w-full h-auto max-h-[500px] object-cover hover:scale-105 transition-transform duration-500"
+                className="w-full h-auto max-h-[600px] object-contain hover:scale-105 transition-transform duration-500"
               />
             </div>
           </figure>

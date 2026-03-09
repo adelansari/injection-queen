@@ -23,9 +23,9 @@ export const post: BlogPost = {
 
 **In deze blog leggen we uit hoelang Botox gemiddeld werkt, wanneer herhalen verstandig is en wat medisch gezien de beste aanpak is voor een natuurlijk en stabiel resultaat.**
 
-## Hoelang werkt Botox gemiddeld?
-
 [IMAGE:botox-treatment.jpg:left]
+
+## Hoelang werkt Botox gemiddeld?
 
 Botox werkt gemiddeld drie tot vier maanden. Hoelang het effect precies aanhoudt, verschilt per persoon. Factoren zoals spierkracht, stofwisseling en het behandelde gebied spelen hierin een rol. Iemand met sterke frons- of voorhoofdsspieren kan merken dat het effect iets sneller afneemt dan iemand met een mildere mimiek.
 
@@ -86,9 +86,9 @@ Je bent welkom in onze kliniek in Amsterdam of Spijkenisse voor een afspraak op 
 
 **In this blog, we explain how long Botox typically works, when it's wise to repeat it, and what the best medical approach is for a natural and stable result.**
 
-## How long does Botox typically work?
-
 [IMAGE:botox-treatment.jpg:left]
+
+## How long does Botox typically work?
 
 Botox works for an average of three to four months. Exactly how long the effect lasts varies from person to person. Factors such as muscle strength, metabolism, and the treated area play a role. Someone with strong frown or forehead muscles may notice the effect wears off slightly faster than someone with milder facial expressions.
 
@@ -115,9 +115,9 @@ Many people wonder if Botox works stronger when you have it done more often. The
 • Wrinkles have less chance to form deep in the skin
 • The result looks more consistent throughout the year
 
-[IMAGE:cosmetic-treatment.jpg:right]
-
 Important to know: this varies per person. Someone with strong facial expressions will respond differently than someone with subtler muscle activity. Botox always remains temporary and safely biodegradable. So regularity isn't about doing more, but about controlled maintenance.
+
+[IMAGE:cosmetic-treatment.jpg:right]
 
 ## What happens if you stop Botox?
 
@@ -131,6 +131,8 @@ A common concern is that wrinkles come back worse when you stop using Botox. Thi
 • No extra sagging or "damage" occurs
 
 Botox doesn't change anything permanently about your skin structure. The effect is temporary and fully reversible. If you stop treatments, you simply go back to your natural situation, not a deteriorated version of it.
+
+[END]
 
 ## Our advice on repeating Botox
 
