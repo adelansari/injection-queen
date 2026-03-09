@@ -1,8 +1,9 @@
 import { motion } from 'framer-motion';
-import { ArrowRight, Sparkles, Shield, Heart, MapPin, Phone } from 'lucide-react';
+import { ArrowRight, Sparkles, Shield, Heart, MapPin, Phone, Instagram } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { PlaceholderImage } from '../components/PlaceholderImage';
+
+import { InstagramFeed } from '../components/InstagramFeed';
 
 export function Home() {
   const { t } = useTranslation();
@@ -60,7 +61,33 @@ export function Home() {
               </div>
             </div>
             <motion.div initial={{ opacity: 0, x: 50 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.3 }} className="hidden lg:block">
-              <PlaceholderImage text="Hero Image - Kliniek foto" aspectRatio="square" className="w-full" />
+              <div className="relative">
+                <img 
+                  src="/images/home/hero.jpg" 
+                  alt="Injection Queen Kliniek"
+                  className="w-full h-[600px] object-cover rounded-2xl shadow-2xl"
+                  onError={(e) => {
+                    const target = e.target as HTMLImageElement;
+                    target.style.display = 'none';
+                    target.parentElement?.classList.add('placeholder-active');
+                  }}
+                />
+                {/* Floating Badge */}
+                <motion.div 
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: 0.6 }}
+                  className="absolute -bottom-6 -left-6 bg-white dark:bg-[#1a1a2e] rounded-xl shadow-xl p-4 flex items-center gap-3"
+                >
+                  <div className="w-12 h-12 bg-[#c9a961]/10 rounded-full flex items-center justify-center">
+                    <Shield className="w-6 h-6 text-[#c9a961]" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-semibold text-[#1a1a2e] dark:text-white">BIG Geregistreerd</p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">Officiële erkenning</p>
+                  </div>
+                </motion.div>
+              </div>
             </motion.div>
           </div>
         </div>
@@ -77,14 +104,24 @@ export function Home() {
           </motion.div>
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {[
-              { title: t('home.treatments.lipFillers'), desc: t('home.treatments.lipFillersDesc'), link: '/lippen', img: 'Lippen behandeling foto' },
-              { title: t('home.treatments.forehead'), desc: t('home.treatments.foreheadDesc'), link: '/voorhoofdrimpels', img: 'Voorhoofd behandeling foto' },
-              { title: t('home.treatments.chin'), desc: t('home.treatments.chinDesc'), link: '/kin', img: 'Kin behandeling foto' },
-              { title: t('home.treatments.crowsFeet'), desc: t('home.treatments.crowsFeetDesc'), link: '/kraaienpootjes', img: 'Ogen behandeling foto' },
+              { title: t('home.treatments.lipFillers'), desc: t('home.treatments.lipFillersDesc'), link: '/lippen', img: '/images/treatments/lip-fillers.jpg' },
+              { title: t('home.treatments.forehead'), desc: t('home.treatments.foreheadDesc'), link: '/voorhoofdrimpels', img: '/images/blog/close-up-beautician-hands-protective-gloves-making-injection-female-forehead-scaled.jpg' },
+              { title: t('home.treatments.chin'), desc: t('home.treatments.chinDesc'), link: '/kin', img: '/images/blog/beauty-injection-woman-making-correction-her-nose-lips-salonxd-scaled.jpg' },
+              { title: t('home.treatments.crowsFeet'), desc: t('home.treatments.crowsFeetDesc'), link: '/kraaienpootjes', img: '/images/blog/Behandeling-cosmetisch-kraaienpootjes-1.jpg' },
             ].map((treatment, index) => (
               <motion.div key={index} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.1 }}
                 whileHover={{ y: -8 }} className="group bg-gradient-to-br from-[#faf8f5] to-white dark:from-[#1a1a2e] dark:to-[#1a1a2e]/50 rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all">
-                <PlaceholderImage text={treatment.img} aspectRatio="video" className="w-full rounded-none" />
+                <div className="aspect-video overflow-hidden">
+                  <img 
+                    src={treatment.img} 
+                    alt={treatment.title}
+                    className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+                    onError={(e) => {
+                      const target = e.target as HTMLImageElement;
+                      target.style.display = 'none';
+                    }}
+                  />
+                </div>
                 <div className="p-6">
                   <h3 className="text-lg font-bold text-[#1a1a2e] dark:text-white mb-2 group-hover:text-[#c9a961] transition-colors">{treatment.title}</h3>
                   <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">{treatment.desc}</p>
@@ -116,14 +153,66 @@ export function Home() {
               </Link>
             </motion.div>
             <motion.div initial={{ opacity: 0, x: 50 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }}>
-              <PlaceholderImage text="Zainab Haidari - Specialist foto" aspectRatio="square" className="w-full shadow-2xl" />
+              <div className="relative">
+                <img 
+                  src="/images/about/zainab-haidari.jpg" 
+                  alt="Zainab Haidari - Injection Queen"
+                  className="w-full h-[500px] object-cover rounded-2xl shadow-2xl"
+                  onError={(e) => {
+                    const target = e.target as HTMLImageElement;
+                    target.style.display = 'none';
+                  }}
+                />
+                {/* Experience Badge */}
+                <motion.div 
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: 0.3 }}
+                  className="absolute -bottom-4 -right-4 bg-[#c9a961] text-white rounded-xl shadow-xl p-4"
+                >
+                  <p className="text-3xl font-bold">5+</p>
+                  <p className="text-sm">Jaar ervaring</p>
+                </motion.div>
+              </div>
             </motion.div>
           </div>
         </div>
       </section>
 
-      {/* Location Preview */}
+      {/* Instagram Feed Section */}
       <section className="py-24 bg-white dark:bg-[#0f0f1a]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.div 
+            initial={{ opacity: 0, y: 30 }} 
+            whileInView={{ opacity: 1, y: 0 }} 
+            viewport={{ once: true }}
+            className="text-center mb-12"
+          >
+            <span className="inline-flex items-center gap-2 px-4 py-1.5 bg-gradient-to-r from-purple-500/10 via-pink-500/10 to-orange-500/10 text-[#c9a961] text-sm font-medium rounded-full mb-4">
+              <Instagram className="w-4 h-4" />
+              Instagram
+            </span>
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-bold text-[#1a1a2e] dark:text-white mb-4">
+              Volg ons op Instagram
+            </h2>
+            <p className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
+              Blijf op de hoogte van de nieuwste behandelingen, resultaten en nieuws van Injection Queen
+            </p>
+          </motion.div>
+          
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+          >
+            <InstagramFeed />
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Location Preview */}
+      <section className="py-24 bg-gradient-to-b from-white via-[#faf8f5]/30 to-white dark:from-[#0f0f1a] dark:via-[#1a1a2e]/30 dark:to-[#0f0f1a]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-16">
             <span className="inline-block px-4 py-1.5 bg-[#c9a961]/10 text-[#c9a961] text-sm font-medium rounded-full mb-4">{t('home.locations.tagline')}</span>
@@ -131,7 +220,17 @@ export function Home() {
           </motion.div>
           <div className="grid md:grid-cols-2 gap-8">
             <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="bg-gradient-to-br from-[#faf8f5] to-white dark:from-[#1a1a2e] dark:to-[#1a1a2e]/50 rounded-2xl overflow-hidden shadow-lg">
-              <PlaceholderImage text="Amsterdam Kliniek foto" aspectRatio="video" className="w-full rounded-none" />
+              <div className="aspect-video overflow-hidden">
+                <img 
+                  src="/images/locations/amsterdam.jpg" 
+                  alt="Injection Queen Amsterdam"
+                  className="w-full h-full object-cover"
+                  onError={(e) => {
+                    const target = e.target as HTMLImageElement;
+                    target.style.display = 'none';
+                  }}
+                />
+              </div>
               <div className="p-8">
                 <div className="flex items-start gap-4">
                   <div className="w-14 h-14 bg-[#c9a961]/10 rounded-xl flex items-center justify-center"><MapPin className="w-7 h-7 text-[#c9a961]" /></div>
@@ -144,7 +243,20 @@ export function Home() {
               </div>
             </motion.div>
             <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.1 }} className="bg-gradient-to-br from-[#faf8f5] to-white dark:from-[#1a1a2e] dark:to-[#1a1a2e]/50 rounded-2xl overflow-hidden shadow-lg">
-              <PlaceholderImage text="Spijkenisse Kliniek foto (binnenkort)" aspectRatio="video" className="w-full rounded-none" />
+              <div className="aspect-video overflow-hidden bg-gray-200 dark:bg-gray-700">
+                <img 
+                  src="/images/locations/amsterdam.jpg" 
+                  alt="Injection Queen Spijkenisse - Binnenkort"
+                  className="w-full h-full object-cover opacity-50"
+                  onError={(e) => {
+                    const target = e.target as HTMLImageElement;
+                    target.style.display = 'none';
+                  }}
+                />
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <span className="px-4 py-2 bg-[#c9a961] text-white font-semibold rounded-full">Binnenkort</span>
+                </div>
+              </div>
               <div className="p-8">
                 <div className="flex items-start gap-4">
                   <div className="w-14 h-14 bg-[#c9a961]/10 rounded-xl flex items-center justify-center"><MapPin className="w-7 h-7 text-[#c9a961]" /></div>
