@@ -2,7 +2,8 @@ import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Crown, Sun, Moon, Globe, Menu, X, ArrowRight } from 'lucide-react';
+import { Sun, Moon, Globe, Menu, X, ArrowRight } from 'lucide-react';
+import LogoSvg from '/logo/InjectionqueenAangepastCropped.svg';
 import { useTheme } from '../hooks/useTheme';
 
 export function Navbar() {
@@ -68,20 +69,15 @@ export function Navbar() {
             {/* Logo */}
             <Link to="/" className="relative group">
               <motion.div 
-                className="flex items-center gap-2"
+                className="flex items-center"
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
               >
-                <motion.div
-                  animate={{ rotate: isScrolled ? 0 : [0, -10, 10, 0] }}
-                  transition={{ duration: 2, repeat: Infinity, repeatDelay: 3 }}
-                >
-                  <Crown className="w-8 h-8 text-[#c9a961]" />
-                </motion.div>
-                <span className="text-xl lg:text-2xl font-serif font-bold">
-                  <span className="text-[#1a1a2e] dark:text-white">Injection</span>
-                  <span className="text-[#c9a961]">Queen</span>
-                </span>
+                <img 
+                  src={LogoSvg} 
+                  alt="Injection Queen"
+                  className="h-10 lg:h-12 w-auto dark:invert dark:brightness-200 transition-all duration-300"
+                />
               </motion.div>
             </Link>
 
@@ -247,13 +243,13 @@ export function Navbar() {
             >
               {/* Mobile Header */}
               <div className="flex items-center justify-between p-6 border-b border-gray-100 dark:border-gray-800">
-                <Link to="/" className="flex items-center gap-2" onClick={() => setIsMenuOpen(false)}>
-                  <Crown className="w-7 h-7 text-[#c9a961]" />
-                  <span className="text-lg font-serif font-bold">
-                    <span className="text-[#1a1a2e] dark:text-white">Injection</span>
-                    <span className="text-[#c9a961]">Queen</span>
-                  </span>
-                </Link>
+                <Link to="/" className="flex items-center" onClick={() => setIsMenuOpen(false)}>
+                <img 
+                  src={LogoSvg} 
+                  alt="Injection Queen"
+                  className="h-8 w-auto dark:invert dark:brightness-200 transition-all duration-300"
+                />
+              </Link>
                 <button
                   onClick={() => setIsMenuOpen(false)}
                   className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"

@@ -31,6 +31,8 @@ Botox werkt gemiddeld drie tot vier maanden. Hoelang het effect precies aanhoudt
 
 Bij een eerste behandeling kan het resultaat soms iets korter zichtbaar blijven. Na herhaalde behandelingen merken veel cliënten dat de spieren minder krachtig samentrekken, waardoor het effect geleidelijk stabieler wordt. Dit betekent niet dat Botox permanent wordt, maar wel dat de spieractiviteit zich kan aanpassen.
 
+[END]
+
 ## Het juiste moment om Botox te herhalen
 
 Voor een stabiel en natuurlijk resultaat is timing belangrijk. In de meeste gevallen is het verstandig om een herhaalbehandeling in te plannen rond de **drie tot vier maanden**, dus voordat de spieractiviteit volledig is teruggekeerd. Op dat moment is er nog een lichte remming van de spier aanwezig, waardoor het effect mooi kan worden opgebouwd.
@@ -50,9 +52,9 @@ Veel mensen vragen zich af of Botox sterker werkt wanneer je het vaker laat doen
 • Rimpels krijgen minder kans om zich diep in de huid te vormen
 • Het resultaat oogt constanter gedurende het jaar
 
-[IMAGE:cosmetic-treatment.jpg:right]
-
 Belangrijk om te weten: dit verschilt per persoon. Iemand met sterke mimiek zal anders reageren dan iemand met subtielere spieractiviteit. Botox blijft altijd tijdelijk en veilig afbreekbaar. Regelmaat draait dus niet om meer doen, maar om gecontroleerd onderhouden.
+
+[IMAGE:cosmetic-treatment.jpg:right]
 
 ## Wat gebeurt er als je stopt met Botox?
 
@@ -66,6 +68,8 @@ Een veelgehoorde zorg is dat rimpels erger terugkomen wanneer je stopt met Botox
 • Er ontstaat geen extra verslapping of "schade"
 
 Botox verandert niets blijvend aan je huidstructuur. Het effect is tijdelijk en volledig omkeerbaar. Stop je met behandelen, dan ga je simpelweg terug naar je natuurlijke situatie, niet naar een verslechterde versie daarvan.
+
+[END]
 
 ## Ons advies over het herhalen van Botox
 
@@ -89,6 +93,8 @@ Je bent welkom in onze kliniek in Amsterdam of Spijkenisse voor een afspraak op 
 Botox works for an average of three to four months. Exactly how long the effect lasts varies from person to person. Factors such as muscle strength, metabolism, and the treated area play a role. Someone with strong frown or forehead muscles may notice the effect wears off slightly faster than someone with milder facial expressions.
 
 With a first treatment, the result may sometimes be visible for a shorter period. After repeated treatments, many clients notice that the muscles contract less powerfully, making the effect gradually more stable. This doesn't mean Botox becomes permanent, but rather that muscle activity can adapt.
+
+[END]
 
 ## The right time to repeat Botox
 
