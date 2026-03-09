@@ -6,39 +6,66 @@ const POSTS = [
   {
     id: 'DU8IC8cDUlH',
     image: '/images/instagram/DU8IC8cDUlH/DU8IC8cDUlH.jpg',
-    caption: 'With strategically placed jawline and chin filler, you can completely transform your side profile without cosmetic surgery. By adding definition, projection, and balance, we enhance your natural features while keeping the results elegant and refined. No scalpels. No downtime. Just precision and artistry 🫶🏼',
-    position: 'left' // 2 rows, 1 column
+    alt: 'Jawline and chin filler transformation showing before and after results',
+    caption: `With strategically placed jawline and chin filler, you can completely transform your side profile without cosmetic surgery. By adding definition, projection, and balance, we enhance your natural features while keeping the results elegant and refined. No scalpels. No downtime. Just precision and artistry 🫶🏼
+
+A stronger profile can elevate your entire facial harmony. Ready to enhance your side profile the non-surgical way? Book your consultation today and let's create your best angles together. 💉💫`,
   },
   {
     id: 'DUJAfaZjD56',
     image: '/images/instagram/DUJAfaZjD56/DUJAfaZjD56.jpg',
-    caption: 'A little film roll of our favourite moments from the past month 📸 So many beautiful results, happy faces, and special transformations. We\'re incredibly grateful to all our clients who trust us and allow us to share their stunning results on our socials 🤍 Thank you for making it possible for everyone to enjoy and be inspired by these beautiful outcomes 💉',
-    position: 'top'
+    alt: 'Collage of favourite moments from the past month showing beautiful transformations',
+    caption: `A little film roll of our favourite moments from the past month 📸 So many beautiful results, happy faces, and special transformations.
+We're incredibly grateful to all our clients who trust us and allow us to share their stunning results on our socials 🤍
+
+Thank you for making it possible for everyone to enjoy and be inspired by these beautiful outcomes 💉`,
   },
   {
     id: 'DVeTZ5WjWVj',
     image: '/images/instagram/DVeTZ5WjWVj/DVeTZ5WjWVj.jpg',
-    caption: 'Perfectly balanced lips aren\'t always about adding more volume they\'re about harmony and natural beauty✨ Lip fillers can subtly refine your shape, enhance symmetry, and bring balance to your facial features without looking overdone. Sometimes the most beautiful results are the ones that simply look like you, just a little more refreshed and confident. If you\'ve been thinking about lip fillers, remember: it\'s not about bigger it\'s about balance💉',
-    position: 'top'
+    alt: 'Perfectly balanced lip filler results showing natural harmony and beauty',
+    caption: `Perfectly balanced lips aren't always about adding more volume they're about harmony and natural beauty✨
+
+Lip fillers can subtly refine your shape, enhance symmetry, and bring balance to your facial features without looking overdone. Sometimes the most beautiful results are the ones that simply look like you, just a little more refreshed and confident.
+
+If you've been thinking about lip fillers, remember: it's not about bigger it's about balance💉`,
   },
   {
     id: 'DVJoHeNjdRX',
     image: '/images/instagram/DVJoHeNjdRX/DVJoHeNjdRX.jpg',
-    caption: 'Subtle and balanced exactly how lip fillers should be. The goal is always enhancement, not overfilling. A natural look that complements your features and boosts your confidence. We are specialized in different lip shapes and advanced techniques from soft hydration and definition to fuller, more sculpted results. Whether you prefer a natural enhancement or a more noticeable volume boost, everything is possible and always customized to you. Ready for your own transformation? Book your appointment now and let\'s create the perfect lips for you 💉💋',
-    position: 'top'
+    alt: 'Subtle and balanced lip filler enhancement customized to natural features',
+    caption: `Subtle and balanced exactly how lip fillers should be. The goal is always enhancement, not overfilling. A natural look that complements your features and boosts your confidence.
+
+We are specialized in different lip shapes and advanced techniques from soft hydration and definition to fuller, more sculpted results.
+
+Whether you prefer a natural enhancement or a more noticeable volume boost, everything is possible and always customized to you.
+
+Ready for your own transformation?
+Book your appointment now and let's create the perfect lips for you 💉💋`,
   },
   {
     id: 'DUvT3NqDS3D',
     image: '/images/instagram/DUvT3NqDS3D/DUvT3NqDS3D.jpg',
-    caption: 'We couldn\'t stay behind on this trend… 👑✨ So we asked ChatGPT what a perfect day at Injection Queen would look like, and this is the result 💉📸💄 Lights on. Camera ready. Beautiful results. Happy patients. Content creation in between treatments and a whole lot of confidence boosting. Do you agree? Is this the perfect Injection Queen day? 💖',
-    position: 'top'
+    alt: 'Behind the scenes at Injection Queen showing a perfect day of treatments and content creation',
+    caption: `We couldn't stay behind on this trend… 👑✨
+
+So we asked ChatGPT what a perfect day at Injection Queen would look like, and this is the result 💉📸💄
+
+Lights on. Camera ready. Beautiful results. Happy patients. Content creation in between treatments and a whole lot of confidence boosting.
+
+Do you agree? Is this the perfect Injection Queen day? 💖`,
   },
   {
     id: 'DU_AmzuDbrT',
     image: '/images/instagram/DU_AmzuDbrT/DU_AmzuDbrT.jpg',
-    caption: 'Dreaming of a side profile like this? ✨ This client chose a jawline filler treatment combined with a subtle lip filler touch-up to enhance balance and definition. The result? A more sculpted contour, improved harmony, and a naturally refined profile — without surgery. This is the fully healed result after 3 weeks. 💫 Ready to enhance your profile? Book your consultation and let\'s create your perfect angles together 🫶🏼',
-    position: 'right' // 2 rows, 1 column
-  }
+    alt: 'Jawline filler treatment combined with subtle lip filler showing sculpted contour after 3 weeks',
+    caption: `Dreaming of a side profile like this? ✨
+This client chose a jawline filler treatment combined with a subtle lip filler touch-up to enhance balance and definition.
+
+The result? A more sculpted contour, improved harmony, and a naturally refined profile — without surgery. This is the fully healed result after 3 weeks. 💫
+
+Ready to enhance your profile? Book your consultation and let's create your perfect angles together 🫶🏼`,
+  },
 ];
 
 export function InstagramFeed() {
@@ -77,26 +104,32 @@ export function InstagramFeed() {
           </motion.p>
         </div>
 
-        {/* Grid - Desktop: 4 columns, 2 rows */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
-          {/* Post 1 - Left column, spans 2 rows */}
+        {/* Grid - Large screens: 4 columns with special layout
+            Medium screens: 2 columns, all same size
+            Small screens: 1 column, all same size */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
+          {/* Mobile/Tablet: All posts are same size in a simple grid */}
+          
+          {/* Desktop Large (lg+): Special layout */}
+          
+          {/* Post 1 - Large: tall on left (2 rows), Small/Medium: normal */}
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
             transition={{ delay: 0 }}
             onClick={() => setSelected(POSTS[0])}
-            className="group relative overflow-hidden rounded-xl cursor-pointer col-span-1 row-span-2 aspect-[3/4]"
+            className="group relative overflow-hidden rounded-xl cursor-pointer lg:row-span-2 aspect-square lg:aspect-auto"
           >
             <img
               src={POSTS[0].image}
-              alt=""
+              alt={POSTS[0].alt}
               className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
             />
             <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors duration-300" />
           </motion.div>
 
-          {/* Post 2 - Top row, middle */}
+          {/* Post 2 - Large: top middle, Small/Medium: normal */}
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             whileInView={{ opacity: 1, scale: 1 }}
@@ -107,13 +140,13 @@ export function InstagramFeed() {
           >
             <img
               src={POSTS[1].image}
-              alt=""
+              alt={POSTS[1].alt}
               className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
             />
             <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors duration-300" />
           </motion.div>
 
-          {/* Post 3 - Top row, middle */}
+          {/* Post 3 - Large: top middle, Small/Medium: normal */}
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             whileInView={{ opacity: 1, scale: 1 }}
@@ -124,30 +157,30 @@ export function InstagramFeed() {
           >
             <img
               src={POSTS[2].image}
-              alt=""
+              alt={POSTS[2].alt}
               className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
             />
             <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors duration-300" />
           </motion.div>
 
-          {/* Post 6 - Right column, spans 2 rows */}
+          {/* Post 6 - Large: tall on right (2 rows), Small/Medium: normal */}
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
             transition={{ delay: 0.3 }}
             onClick={() => setSelected(POSTS[5])}
-            className="group relative overflow-hidden rounded-xl cursor-pointer col-span-1 row-span-2 aspect-[3/4]"
+            className="group relative overflow-hidden rounded-xl cursor-pointer lg:row-span-2 aspect-square lg:aspect-auto"
           >
             <img
               src={POSTS[5].image}
-              alt=""
+              alt={POSTS[5].alt}
               className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
             />
             <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors duration-300" />
           </motion.div>
 
-          {/* Post 4 - Bottom row, middle */}
+          {/* Post 4 - Large: bottom middle, Small/Medium: normal */}
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             whileInView={{ opacity: 1, scale: 1 }}
@@ -158,13 +191,13 @@ export function InstagramFeed() {
           >
             <img
               src={POSTS[3].image}
-              alt=""
+              alt={POSTS[3].alt}
               className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
             />
             <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors duration-300" />
           </motion.div>
 
-          {/* Post 5 - Bottom row, middle */}
+          {/* Post 5 - Large: bottom middle, Small/Medium: normal */}
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             whileInView={{ opacity: 1, scale: 1 }}
@@ -175,7 +208,7 @@ export function InstagramFeed() {
           >
             <img
               src={POSTS[4].image}
-              alt=""
+              alt={POSTS[4].alt}
               className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
             />
             <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors duration-300" />
@@ -213,6 +246,7 @@ export function InstagramFeed() {
             <button
               onClick={() => setSelected(null)}
               className="absolute top-4 right-4 text-white/70 hover:text-white z-10"
+              aria-label="Close modal"
             >
               <X className="w-6 h-6" />
             </button>
@@ -224,7 +258,11 @@ export function InstagramFeed() {
               onClick={(e) => e.stopPropagation()}
             >
               <div className="aspect-square">
-                <img src={selected.image} alt="" className="w-full h-full object-cover" />
+                <img 
+                  src={selected.image} 
+                  alt={selected.alt} 
+                  className="w-full h-full object-cover" 
+                />
               </div>
               <div className="p-6">
                 <div className="flex items-center gap-3 mb-4">
@@ -234,7 +272,9 @@ export function InstagramFeed() {
                     <p className="text-xs text-gray-500">Amsterdam</p>
                   </div>
                 </div>
-                <p className="text-gray-800 dark:text-gray-200 text-sm leading-relaxed whitespace-pre-line">{selected.caption}</p>
+                <p className="text-gray-800 dark:text-gray-200 text-sm leading-relaxed whitespace-pre-line">
+                  {selected.caption}
+                </p>
                 <a
                   href={`https://instagram.com/p/${selected.id}`}
                   target="_blank"
