@@ -12,7 +12,7 @@ export const post: BlogPost = {
   category: 'Botox',
   author: 'Zainab Haidari',
   readTime: '5 min',
-  image: '/images/blog/2024-12-13-de-voordelen-van-faceslimming/img_1772897011.jpg',
+  image: '/images/blog/2024-12-13-de-voordelen-van-faceslimming/featured.jpg',
   images: [],
   content: `## De voordelen van faceslimming met Botox
 

@@ -12,10 +12,10 @@ export const post: BlogPost = {
   category: 'Huidverzorging',
   author: 'Zainab Haidari',
   readTime: '5 min',
-  image: '/images/blog/2024-12-13-wat-helpt-echt-tegen-rimpels/wat-helpt-echt-tegen-rimpels-scaled.jpg',
+  image: '/images/blog/2024-12-13-wat-helpt-echt-tegen-rimpels/featured.jpg',
   images: [
-    '/images/blog/2024-12-13-wat-helpt-echt-tegen-rimpels/wat-helpt-echt-tegen-rimpels-scaled.jpg',
-    '/images/blog/2024-12-13-wat-helpt-echt-tegen-rimpels/smooth-hair-woman-long-hair-beauty-girl-with-pink-lips-color-background-brown-scaled.jpg',
+    '/images/blog/2024-12-13-wat-helpt-echt-tegen-rimpels/featured.jpg',
+    '/images/blog/2024-12-13-wat-helpt-echt-tegen-rimpels/beauty-woman.jpg',
   ],
   content: `De vraag 'Wat helpt echt tegen rimpels?' wordt vaak gesteld. Veel mensen willen weten hoe ze rimpels kunnen voorkomen en wat ze kunnen doen tegen bestaande rimpels. Er zijn gelukkig verschillende dingen die je zelf kunt doen tegen rimpels, en we lichten ze hieronder voor je uit.
 

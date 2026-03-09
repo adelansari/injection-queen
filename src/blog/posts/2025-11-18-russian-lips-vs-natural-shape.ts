@@ -12,10 +12,10 @@ export const post: BlogPost = {
   category: 'Lipfillers',
   author: 'Zainab Haidari',
   readTime: '5 min',
-  image: '/images/blog/2025-11-18-russian-lips-vs-natural-shape/img_1772896996.jpg',
+  image: '/images/blog/2025-11-18-russian-lips-vs-natural-shape/featured.jpg',
   images: [
-    '/images/blog/2025-11-18-russian-lips-vs-natural-shape/img_1772896996.jpg',
-    '/images/blog/2025-11-18-russian-lips-vs-natural-shape/doctor-cosmetologist-makes-rejuvenating-facial-injections-procedure-tightening-smoothing-wrinkles-face-skin-women-beauty-salon-cosmetology-skin-care-scaled.jpg',
+    '/images/blog/2025-11-18-russian-lips-vs-natural-shape/featured.jpg',
+    '/images/blog/2025-11-18-russian-lips-vs-natural-shape/facial-injections.jpg',
   ],
   content: `**De ene lip filler is de andere niet. Steeds meer mensen zijn bekend met de populaire Russian lips techniek, terwijl anderen juist kiezen voor een natuurlijke, verfijnde vorm. Maar wat is nu eigenlijk het verschil, en nog belangrijker: wat past bij jou? In deze blog leggen we je alles uit over Russian lips vs. natural shape, inclusief voor- en nadelen, esthetisch effect en waar je op moet letten als je een keuze maakt.**
 

@@ -12,16 +12,20 @@ export const post: BlogPost = {
   category: 'Botox',
   author: 'Zainab Haidari',
   readTime: '5 min',
-  image: '/images/blog/2026-02-25-hoe-vaak-moet-je-botox-herhalen/Resultaat-bekijken-cosmetische-behandeling-1.jpg',
+  image: '/images/blog/2026-02-25-hoe-vaak-moet-je-botox-herhalen/featured.jpg',
   images: [
-    '/images/blog/2026-02-25-hoe-vaak-moet-je-botox-herhalen/Resultaat-bekijken-cosmetische-behandeling-1.jpg',
-    '/images/blog/2026-02-25-hoe-vaak-moet-je-botox-herhalen/Behandeling-cosmetisch-kraaienpootjes-1.jpg',
+    '/images/blog/2026-02-25-hoe-vaak-moet-je-botox-herhalen/featured.jpg',
+    '/images/blog/2026-02-25-hoe-vaak-moet-je-botox-herhalen/botox-treatment.jpg',
+    '/images/blog/2026-02-25-hoe-vaak-moet-je-botox-herhalen/face-lifting.jpg',
+    '/images/blog/2026-02-25-hoe-vaak-moet-je-botox-herhalen/cosmetic-treatment.jpg',
   ],
   content: `**Botox is tijdelijk. Toch zien we dat veel mensen twijfelen over het juiste moment om een behandeling te herhalen. Wacht je tot alles volledig is uitgewerkt of plan je eerder een vervolgafspraak in? En maakt regelmaat eigenlijk verschil voor het resultaat op lange termijn?**
 
 **In deze blog leggen we uit hoelang Botox gemiddeld werkt, wanneer herhalen verstandig is en wat medisch gezien de beste aanpak is voor een natuurlijk en stabiel resultaat.**
 
 ## Hoelang werkt Botox gemiddeld?
+
+[IMAGE:botox-treatment.jpg:left]
 
 Botox werkt gemiddeld drie tot vier maanden. Hoelang het effect precies aanhoudt, verschilt per persoon. Factoren zoals spierkracht, stofwisseling en het behandelde gebied spelen hierin een rol. Iemand met sterke frons- of voorhoofdsspieren kan merken dat het effect iets sneller afneemt dan iemand met een mildere mimiek.
 
@@ -30,6 +34,8 @@ Bij een eerste behandeling kan het resultaat soms iets korter zichtbaar blijven.
 ## Het juiste moment om Botox te herhalen
 
 Voor een stabiel en natuurlijk resultaat is timing belangrijk. In de meeste gevallen is het verstandig om een herhaalbehandeling in te plannen rond de **drie tot vier maanden**, dus voordat de spieractiviteit volledig is teruggekeerd. Op dat moment is er nog een lichte remming van de spier aanwezig, waardoor het effect mooi kan worden opgebouwd.
+
+[IMAGE:face-lifting.jpg:full]
 
 Wacht je te lang tot Botox volledig is uitgewerkt, dan moet de spier opnieuw vanaf nul worden geremd. Dat is niet schadelijk, maar het kan ervoor zorgen dat rimpels tijdelijk weer duidelijker zichtbaar worden. Door regelmaat aan te houden, blijft het resultaat rustiger en constanter.
 
@@ -43,6 +49,8 @@ Veel mensen vragen zich af of Botox sterker werkt wanneer je het vaker laat doen
 • Je hebt soms iets minder product nodig
 • Rimpels krijgen minder kans om zich diep in de huid te vormen
 • Het resultaat oogt constanter gedurende het jaar
+
+[IMAGE:cosmetic-treatment.jpg:right]
 
 Belangrijk om te weten: dit verschilt per persoon. Iemand met sterke mimiek zal anders reageren dan iemand met subtielere spieractiviteit. Botox blijft altijd tijdelijk en veilig afbreekbaar. Regelmaat draait dus niet om meer doen, maar om gecontroleerd onderhouden.
 
@@ -76,6 +84,8 @@ Je bent welkom in onze kliniek in Amsterdam of Spijkenisse voor een afspraak op 
 
 ## How long does Botox typically work?
 
+[IMAGE:botox-treatment.jpg:left]
+
 Botox works for an average of three to four months. Exactly how long the effect lasts varies from person to person. Factors such as muscle strength, metabolism, and the treated area play a role. Someone with strong frown or forehead muscles may notice the effect wears off slightly faster than someone with milder facial expressions.
 
 With a first treatment, the result may sometimes be visible for a shorter period. After repeated treatments, many clients notice that the muscles contract less powerfully, making the effect gradually more stable. This doesn't mean Botox becomes permanent, but rather that muscle activity can adapt.
@@ -83,6 +93,8 @@ With a first treatment, the result may sometimes be visible for a shorter period
 ## The right time to repeat Botox
 
 For a stable and natural result, timing is important. In most cases, it's wise to schedule a repeat treatment around **three to four months**, before muscle activity has fully returned. At that point, there's still a slight inhibition of the muscle present, allowing the effect to be nicely built up.
+
+[IMAGE:face-lifting.jpg:full]
 
 If you wait too long until Botox has completely worn off, the muscle needs to be inhibited from scratch again. This isn't harmful, but it can cause wrinkles to temporarily become more visible again. By maintaining regularity, the result remains calmer and more consistent.
 
@@ -96,6 +108,8 @@ Many people wonder if Botox works stronger when you have it done more often. The
 • You sometimes need slightly less product
 • Wrinkles have less chance to form deep in the skin
 • The result looks more consistent throughout the year
+
+[IMAGE:cosmetic-treatment.jpg:right]
 
 Important to know: this varies per person. Someone with strong facial expressions will respond differently than someone with subtler muscle activity. Botox always remains temporary and safely biodegradable. So regularity isn't about doing more, but about controlled maintenance.
 

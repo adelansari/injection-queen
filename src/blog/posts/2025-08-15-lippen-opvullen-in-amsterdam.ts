@@ -12,10 +12,10 @@ export const post: BlogPost = {
   category: 'Lipfillers',
   author: 'Zainab Haidari',
   readTime: '4 min',
-  image: '/images/blog/2025-08-15-lippen-opvullen-in-amsterdam/img_1772897021.jpg',
+  image: '/images/blog/2025-08-15-lippen-opvullen-in-amsterdam/featured.jpg',
   images: [
-    '/images/blog/2025-08-15-lippen-opvullen-in-amsterdam/img_1772897021.jpg',
-    '/images/blog/2025-08-15-lippen-opvullen-in-amsterdam/woman-makes-lip-shape-correction-cosmetology-clinic-lips-injections-lip-augmentation-scaled.jpg',
+    '/images/blog/2025-08-15-lippen-opvullen-in-amsterdam/featured.jpg',
+    '/images/blog/2025-08-15-lippen-opvullen-in-amsterdam/lip-correction.jpg',
   ],
   content: `Zoek je subtiele, natuurlijk ogende lipfillers in Amsterdam, dan ben je bij Injection Queen aan het juiste adres. We richten ons op zachte verfijning, zodat jouw lippen voller en frisser ogen zonder hun eigen karakter te verliezen.
 

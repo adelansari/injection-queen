@@ -31,55 +31,138 @@ export function BlogDetail() {
   const content = language === 'nl' ? post.content : post.contentEn;
   const excerpt = language === 'nl' ? post.excerpt : post.excerptEn;
   const displayTitle = language === 'nl' ? post.title : post.titleEn;
+  const images = post.images || [];
 
-  // Function to render content with inline images
-  const renderContentWithImages = () => {
+  // Parse content and handle [IMAGE:filename:position] markers
+  const parseContent = () => {
     const paragraphs = content.split('\n\n');
-    const images = post.images || [];
     const result: ReactElement[] = [];
-    let imageIndex = 0;
+    let regularImageIndex = 1; // Skip featured image (index 0)
 
     paragraphs.forEach((paragraph, idx) => {
-      // Add the paragraph
-      result.push(
-        <div key={`p-${idx}`} className="mb-4">
-          <MarkdownRenderer content={paragraph} />
-        </div>
-      );
+      const trimmed = paragraph.trim();
+      
+      // Check for image markers [IMAGE:filename:position]
+      const imageMatch = trimmed.match(/^\[IMAGE:([^\]:]+)(?::([^\]]+))?\]$/);
+      if (imageMatch) {
+        const filename = imageMatch[1];
+        const position = imageMatch[2] || 'full';
+        const imageUrl = images.find(img => img.includes(filename));
+        
+        if (imageUrl) {
+          if (position === 'left') {
+            result.push(
+              <div key={`img-left-${idx}`} className="my-8">
+                <div className="flex flex-col md:flex-row gap-6 items-start">
+                  <div className="md:w-1/2">
+                    <div className="rounded-xl overflow-hidden shadow-lg">
+                      <img 
+                        src={imageUrl} 
+                        alt=""
+                        className="w-full h-64 object-cover hover:scale-105 transition-transform duration-500"
+                      />
+                    </div>
+                  </div>
+                  <div className="md:w-1/2">
+                    {/* Text will be in the next block */}
+                  </div>
+                </div>
+              </div>
+            );
+          } else if (position === 'right') {
+            result.push(
+              <div key={`img-right-${idx}`} className="my-8">
+                <div className="flex flex-col md:flex-row-reverse gap-6 items-start">
+                  <div className="md:w-1/2">
+                    <div className="rounded-xl overflow-hidden shadow-lg">
+                      <img 
+                        src={imageUrl} 
+                        alt=""
+                        className="w-full h-64 object-cover hover:scale-105 transition-transform duration-500"
+                      />
+                    </div>
+                  </div>
+                  <div className="md:w-1/2">
+                    {/* Text will be in the next block */}
+                  </div>
+                </div>
+              </div>
+            );
+          } else {
+            // Full width image
+            result.push(
+              <figure key={`img-full-${idx}`} className="my-8">
+                <div className="rounded-xl overflow-hidden shadow-lg">
+                  <img 
+                    src={imageUrl} 
+                    alt=""
+                    className="w-full h-auto max-h-[500px] object-cover hover:scale-105 transition-transform duration-500"
+                  />
+                </div>
+              </figure>
+            );
+          }
+        }
+        return;
+      }
 
-      // Insert an image after every 2-3 paragraphs if available
-      if ((idx + 1) % 2 === 0 && imageIndex < images.length) {
-        const img = images[imageIndex];
-        imageIndex++;
+      // Regular paragraph
+      if (trimmed) {
         result.push(
-          <figure key={`img-${idx}`} className="my-8">
+          <div key={`p-${idx}`} className="mb-4">
+            <MarkdownRenderer content={trimmed} />
+          </div>
+        );
+      }
+
+      // Insert regular images after every 3rd paragraph if no explicit image markers used
+      if ((idx + 1) % 3 === 0 && regularImageIndex < images.length) {
+        // Check if we haven't used this image in a marker already
+        const nextImage = images[regularImageIndex];
+        const isUsedInMarker = paragraphs.some(p => {
+          const m = p.match(/\[IMAGE:([^\]]+)\]/);
+          return m && nextImage?.includes(m[1].split(':')[0]);
+        });
+        
+        if (!isUsedInMarker && nextImage) {
+          result.push(
+            <figure key={`img-auto-${idx}`} className="my-8">
+              <div className="rounded-xl overflow-hidden shadow-lg">
+                <img 
+                  src={nextImage} 
+                  alt={`${displayTitle} - afbeelding ${regularImageIndex}`}
+                  className="w-full h-auto max-h-[500px] object-cover hover:scale-105 transition-transform duration-500"
+                />
+              </div>
+            </figure>
+          );
+          regularImageIndex++;
+        }
+      }
+    });
+
+    // Add any remaining images that weren't used
+    while (regularImageIndex < images.length) {
+      const img = images[regularImageIndex];
+      const isUsedInMarker = (paragraphs: string[]) => paragraphs.some((p: string) => {
+        const m = p.match(/\[IMAGE:([^\]]+)\]/);
+        return m && img?.includes(m[1].split(':')[0]);
+      });
+      
+      if (!isUsedInMarker(content.split('\n\n'))) {
+        result.push(
+          <figure key={`img-end-${regularImageIndex}`} className="my-8">
             <div className="rounded-xl overflow-hidden shadow-lg">
               <img 
                 src={img} 
-                alt={`${displayTitle} - afbeelding ${imageIndex}`}
+                alt={`${displayTitle} - afbeelding ${regularImageIndex + 1}`}
                 className="w-full h-auto max-h-[500px] object-cover hover:scale-105 transition-transform duration-500"
               />
             </div>
           </figure>
         );
       }
-    });
-
-    // Add remaining images at the end if any
-    while (imageIndex < images.length) {
-      const img = images[imageIndex];
-      result.push(
-        <figure key={`img-end-${imageIndex}`} className="my-8">
-          <div className="rounded-xl overflow-hidden shadow-lg">
-            <img 
-              src={img} 
-              alt={`${displayTitle} - afbeelding ${imageIndex + 1}`}
-              className="w-full h-auto max-h-[500px] object-cover hover:scale-105 transition-transform duration-500"
-            />
-          </div>
-        </figure>
-      );
-      imageIndex++;
+      regularImageIndex++;
     }
 
     return result;
@@ -177,7 +260,7 @@ export function BlogDetail() {
 
             {/* Main Content with Inline Images */}
             <div className="prose prose-lg max-w-none dark:prose-invert">
-              {renderContentWithImages()}
+              {parseContent()}
             </div>
 
             {/* CTA */}

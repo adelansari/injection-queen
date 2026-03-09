@@ -12,10 +12,10 @@ export const post: BlogPost = {
   category: 'Fillers',
   author: 'Zainab Haidari',
   readTime: '4 min',
-  image: '/images/blog/2025-06-23-wat-is-de-traangoot/img_1772897023.jpg',
+  image: '/images/blog/2025-06-23-wat-is-de-traangoot/featured.jpg',
   images: [
-    '/images/blog/2025-06-23-wat-is-de-traangoot/img_1772897023.jpg',
-    '/images/blog/2025-06-23-wat-is-de-traangoot/portrait-beautiful-woman-getting-mesotherapy-treatment-face-by-specialist-gloves-beauty-salon-scaled.jpg',
+    '/images/blog/2025-06-23-wat-is-de-traangoot/featured.jpg',
+    '/images/blog/2025-06-23-wat-is-de-traangoot/mesotherapy.jpg',
   ],
   content: `De traangoot is het gebied tussen de binnenhoek van je oog en je wangen. Naarmate je ouder wordt, neemt het volume in dit gebied af. Dit kan leiden tot schaduwen, donkere kringen of een vermoeide blik. Ook jongere mensen kunnen hier last van hebben door erfelijkheid of een dunne huid.
 
