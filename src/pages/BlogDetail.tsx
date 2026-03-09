@@ -51,19 +51,19 @@ export function BlogDetail() {
         const isLeft = pendingSideBySide.position === 'left';
         result.push(
           <div key={`sbs-${result.length}`} className="my-8 lg:my-12">
-            <div className="flex flex-col lg:flex-row gap-6 lg:gap-8 items-start">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8 place-items-center">
               {/* Image - full width on mobile, half on desktop */}
-              <div className={`w-full lg:w-1/2 ${isLeft ? 'lg:order-1' : 'lg:order-2'}`}>
-                <div className="rounded-xl overflow-hidden shadow-lg">
+              <div className={`${isLeft ? 'lg:order-1' : 'lg:order-2'}`}>
+                <div className="rounded-xl overflow-hidden shadow-lg h-full max-h-[600px]">
                   <img 
                     src={pendingSideBySide.imageUrl} 
                     alt=""
-                    className="w-full h-auto max-h-[600px] object-contain hover:scale-105 transition-transform duration-500"
+                    className="w-full h-full object-cover object-center hover:scale-105 transition-transform duration-500"
                   />
                 </div>
               </div>
               {/* Text content - full width on mobile, half on desktop */}
-              <div className={`w-full lg:w-1/2 ${isLeft ? 'lg:order-2' : 'lg:order-1'}`}>
+              <div className={`${isLeft ? 'lg:order-2' : 'lg:order-1'}`}>
                 <div className="prose prose-lg dark:prose-invert max-w-none">
                   {pendingSideBySide.contentBlocks.map((block, idx) => (
                     <div key={idx} className={idx > 0 ? 'mt-4' : ''}>
