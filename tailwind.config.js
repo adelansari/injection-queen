@@ -19,8 +19,8 @@ export default {
         rose: '#d4a5a5',
         cream: '#faf8f5',
         dark: {
-          bg: '#0f0f1a',
-          card: '#1a1a2e',
+          bg: '#121212',
+          card: '#2a2a2a',
         },
       },
       fontFamily: {
