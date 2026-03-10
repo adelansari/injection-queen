@@ -100,10 +100,10 @@ export function Home() {
           </motion.div>
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {[
-              { title: t('home.treatments.lipFillers'), desc: t('home.treatments.lipFillersDesc'), link: '/behandelingen/lip-fillers', img: '/images/treatments/lip-fillers.jpg' },
-              { title: t('home.treatments.forehead'), desc: t('home.treatments.foreheadDesc'), link: '/behandelingen/voorhoofdrimpels', img: '/images/blog/close-up-beautician-hands-protective-gloves-making-injection-female-forehead-scaled.jpg' },
-              { title: t('home.treatments.chin'), desc: t('home.treatments.chinDesc'), link: '/behandelingen/kin', img: '/images/blog/beauty-injection-woman-making-correction-her-nose-lips-salonxd-scaled.jpg' },
-              { title: t('home.treatments.crowsFeet'), desc: t('home.treatments.crowsFeetDesc'), link: '/behandelingen/kraaienpootjes', img: '/images/blog/Behandeling-cosmetisch-kraaienpootjes-1.jpg' },
+              { title: t('home.treatments.lipFillers'), desc: t('home.treatments.lipFillersDesc'), link: '/behandelingen/filler-behandelingen/lip-fillers', img: '/images/treatments/lip-fillers.jpg' },
+              { title: t('home.treatments.forehead'), desc: t('home.treatments.foreheadDesc'), link: '/behandelingen/botox/voorhoofdrimpels', img: '/images/blog/close-up-beautician-hands-protective-gloves-making-injection-female-forehead-scaled.jpg' },
+              { title: t('home.treatments.chin'), desc: t('home.treatments.chinDesc'), link: '/behandelingen/filler-behandelingen/kin', img: '/images/blog/beauty-injection-woman-making-correction-her-nose-lips-salonxd-scaled.jpg' },
+              { title: t('home.treatments.crowsFeet'), desc: t('home.treatments.crowsFeetDesc'), link: '/behandelingen/botox/kraaienpootjes', img: '/images/blog/Behandeling-cosmetisch-kraaienpootjes-1.jpg' },
             ].map((treatment, index) => (
               <motion.div key={index} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.1 }}
                 whileHover={{ y: -8 }} className="group bg-gradient-to-br from-[#faf8f5] to-white dark:from-[#1a1a2e] dark:to-[#1a1a2e]/50 rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all">
