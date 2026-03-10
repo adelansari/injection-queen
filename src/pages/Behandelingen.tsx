@@ -3,7 +3,7 @@ import { ArrowRight, Sparkles, Syringe, Droplets, Scissors } from 'lucide-react'
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Breadcrumbs } from '../components/Breadcrumbs';
-import { treatments, categoryNames, type Treatment } from '../data/treatments';
+import { treatments, categoryNames, categoryDescriptions, type Treatment } from '../data/treatments/index';
 
 const categoryIcons: Record<Treatment['category'], typeof Sparkles> = {
   botox: Syringe,
@@ -44,13 +44,16 @@ export function Behandelingen() {
 
             return (
               <motion.div key={cat} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="mb-20 last:mb-0">
-                <div className="flex items-center gap-4 mb-8">
-                  <div className="w-12 h-12 bg-[#c9a961]/10 rounded-xl flex items-center justify-center">
+                <div className="flex items-center gap-4 mb-4">
+                  <div className="w-12 h-12 bg-[#c9a961]/10 rounded-xl flex items-center justify-center flex-shrink-0">
                     <Icon className="w-6 h-6 text-[#c9a961]" />
                   </div>
                   <h2 className="text-3xl font-serif font-bold text-[#1a1a2e] dark:text-white">{catName}</h2>
-                  <div className="flex-1 h-px bg-gradient-to-r from-[#c9a961]/30 to-transparent" />
+                  <div className="flex-1 h-px bg-gradient-to-r from-[#c9a961]/30 to-transparent hidden sm:block" />
                 </div>
+                <p className="text-gray-600 dark:text-gray-400 mb-8 max-w-3xl">
+                  {isNl ? categoryDescriptions[cat].nl : categoryDescriptions[cat].en}
+                </p>
                 <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
                   {items.map((treatment, index) => (
                     <motion.div
@@ -77,8 +80,8 @@ export function Behandelingen() {
                           <div className="w-10 h-10 bg-[#c9a961]/10 rounded-xl flex items-center justify-center">
                             <Sparkles className="w-5 h-5 text-[#c9a961]" />
                           </div>
-                          {treatment.prices[0] && (
-                            <span className="text-sm font-bold text-[#c9a961]">{treatment.prices[0].price}</span>
+                          {treatment.duration && (
+                            <span className="text-xs text-gray-500 dark:text-gray-400">{treatment.duration}</span>
                           )}
                         </div>
                         <h3 className="text-lg font-bold text-[#1a1a2e] dark:text-white mb-1 group-hover:text-[#c9a961] transition-colors">
@@ -88,7 +91,7 @@ export function Behandelingen() {
                           {isNl ? treatment.shortDesc.nl : treatment.shortDesc.en}
                         </p>
                         <Link
-                          to={`/behandelingen/${treatment.slug}`}
+                          to={`/behandelingen/${treatment.categorySlug}/${treatment.slug}`}
                           className="inline-flex items-center gap-2 text-[#c9a961] font-medium text-sm"
                         >
                           {isNl ? 'Meer informatie' : 'More info'} <ArrowRight className="w-4 h-4" />
