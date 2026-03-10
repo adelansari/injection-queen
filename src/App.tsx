@@ -12,10 +12,7 @@ import { Prijzen } from './pages/Prijzen';
 import { Contact } from './pages/Contact';
 import { BlogIndex } from './pages/BlogIndex';
 import { BlogDetail } from './pages/BlogDetail';
-import { Voorhoofdrimpels } from './pages/treatments/Voorhoofdrimpels';
-import { Lippen } from './pages/treatments/Lippen';
-import { Kin } from './pages/treatments/Kin';
-import { Kraaienpootjes } from './pages/treatments/Kraaienpootjes';
+import { TreatmentDetail } from './pages/treatments/TreatmentDetail';
 import './i18n';
 
 function App() {
@@ -35,17 +32,13 @@ function App() {
                 <Route path="/" element={<Home />} />
                 <Route path="/over-ons" element={<OverOns />} />
                 <Route path="/behandelingen" element={<Behandelingen />} />
+                <Route path="/behandelingen/:slug" element={<TreatmentDetail />} />
                 <Route path="/prijzen" element={<Prijzen />} />
                 <Route path="/contact" element={<Contact />} />
-                
+
                 {/* Blog Routes - Date-based URLs with slug for SEO */}
                 <Route path="/blog" element={<BlogIndex />} />
                 <Route path="/blog/:datetime/:slug" element={<BlogDetail />} />
-                
-                <Route path="/voorhoofdrimpels" element={<Voorhoofdrimpels />} />
-                <Route path="/lippen" element={<Lippen />} />
-                <Route path="/kin" element={<Kin />} />
-                <Route path="/kraaienpootjes" element={<Kraaienpootjes />} />
               </Routes>
             </main>
             <Footer />
