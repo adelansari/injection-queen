@@ -1,8 +1,9 @@
+import { useState } from 'react';
 import { useParams, Link, Navigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { motion } from 'framer-motion';
-import { ArrowRight, Check, Phone, Sparkles, ChevronRight } from 'lucide-react';
-import { getTreatmentBySlug, getTreatmentsByCategory, type Treatment } from '../../data/treatments';
+import { motion, AnimatePresence } from 'framer-motion';
+import { ArrowRight, Check, Phone, Sparkles, ChevronRight, ChevronDown, Clock, CalendarCheck, AlertCircle, HelpCircle } from 'lucide-react';
+import { getTreatmentByCategoryAndSlug, getTreatmentsByCategory, type Treatment } from '../../data/treatments/index';
 import { Breadcrumbs } from '../../components/Breadcrumbs';
 
 function RelatedCard({ t: treatment, lang }: { t: Treatment; lang: string }) {
@@ -16,7 +17,7 @@ function RelatedCard({ t: treatment, lang }: { t: Treatment; lang: string }) {
                 {isNl ? treatment.shortDesc.nl : treatment.shortDesc.en}
             </p>
             <Link
-                to={`/behandelingen/${treatment.slug}`}
+                to={`/behandelingen/${treatment.categorySlug}/${treatment.slug}`}
                 className="inline-flex items-center gap-2 text-[#c9a961] font-medium text-sm"
             >
                 {isNl ? 'Meer info' : 'More info'} <ArrowRight className="w-4 h-4" />
@@ -25,13 +26,48 @@ function RelatedCard({ t: treatment, lang }: { t: Treatment; lang: string }) {
     );
 }
 
+function FAQItem({ question, answer, index }: { question: string; answer: string; index: number }) {
+    const [isOpen, setIsOpen] = useState(false);
+    return (
+        <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: index * 0.05 }}
+            className="border border-gray-200 dark:border-gray-700/50 rounded-xl overflow-hidden"
+        >
+            <button
+                onClick={() => setIsOpen(!isOpen)}
+                className="w-full flex items-center justify-between p-5 text-left hover:bg-gray-50 dark:hover:bg-white/5 transition-colors"
+            >
+                <span className="font-medium text-[#1a1a2e] dark:text-white pr-4">{question}</span>
+                <ChevronDown className={`w-5 h-5 text-[#c9a961] flex-shrink-0 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} />
+            </button>
+            <AnimatePresence>
+                {isOpen && (
+                    <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: 'auto', opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.2 }}
+                    >
+                        <div className="px-5 pb-5 text-gray-600 dark:text-gray-300 leading-relaxed">
+                            {answer}
+                        </div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+        </motion.div>
+    );
+}
+
 export function TreatmentDetail() {
-    const { slug } = useParams<{ slug: string }>();
+    const { category, slug } = useParams<{ category: string; slug: string }>();
     const { i18n } = useTranslation();
     const lang = i18n.language;
     const isNl = lang === 'nl';
 
-    const treatment = slug ? getTreatmentBySlug(slug) : undefined;
+    const treatment = category && slug ? getTreatmentByCategoryAndSlug(category, slug) : undefined;
 
     if (!treatment) {
         return <Navigate to="/behandelingen" replace />;
@@ -88,6 +124,23 @@ export function TreatmentDetail() {
                                     <Phone className="w-5 h-5" /> {isNl ? 'Bel direct' : 'Call us'}
                                 </a>
                             </div>
+                            {/* Duration badges */}
+                            {(treatment.duration || treatment.resultDuration) && (
+                                <div className="flex flex-wrap gap-4 mt-6">
+                                    {treatment.duration && (
+                                        <div className="flex items-center gap-2 px-4 py-2 bg-[#1a1a2e]/5 dark:bg-white/5 rounded-full">
+                                            <Clock className="w-4 h-4 text-[#c9a961]" />
+                                            <span className="text-sm text-gray-600 dark:text-gray-300">{isNl ? 'Behandelduur' : 'Duration'}: <strong>{treatment.duration}</strong></span>
+                                        </div>
+                                    )}
+                                    {treatment.resultDuration && (
+                                        <div className="flex items-center gap-2 px-4 py-2 bg-[#1a1a2e]/5 dark:bg-white/5 rounded-full">
+                                            <CalendarCheck className="w-4 h-4 text-[#c9a961]" />
+                                            <span className="text-sm text-gray-600 dark:text-gray-300">{isNl ? 'Resultaat' : 'Result'}: <strong>{treatment.resultDuration}</strong></span>
+                                        </div>
+                                    )}
+                                </div>
+                            )}
                         </motion.div>
 
                         {/* Image or decorative element */}
@@ -133,6 +186,39 @@ export function TreatmentDetail() {
                             ))}
                         </div>
 
+                        {/* Treatment Steps */}
+                        {treatment.steps && treatment.steps.length > 0 && (
+                            <div className="mt-12">
+                                <h3 className="text-2xl font-serif font-bold text-[#1a1a2e] dark:text-white mb-8">
+                                    {isNl ? 'Het behandelproces' : 'Treatment Process'}
+                                </h3>
+                                <div className="space-y-6">
+                                    {treatment.steps.map((step, index) => (
+                                        <motion.div
+                                            key={index}
+                                            initial={{ opacity: 0, x: -20 }}
+                                            whileInView={{ opacity: 1, x: 0 }}
+                                            viewport={{ once: true }}
+                                            transition={{ delay: index * 0.1 }}
+                                            className="flex gap-4"
+                                        >
+                                            <div className="flex-shrink-0 w-10 h-10 bg-[#c9a961] rounded-full flex items-center justify-center text-white font-bold text-sm">
+                                                {index + 1}
+                                            </div>
+                                            <div>
+                                                <h4 className="font-bold text-[#1a1a2e] dark:text-white mb-1">
+                                                    {isNl ? step.title.nl : step.title.en}
+                                                </h4>
+                                                <p className="text-gray-600 dark:text-gray-300">
+                                                    {isNl ? step.description.nl : step.description.en}
+                                                </p>
+                                            </div>
+                                        </motion.div>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+
                         {/* Why Choose Us */}
                         <div className="bg-gradient-to-br from-[#faf8f5] to-white dark:from-[#1a1a2e] dark:to-[#1a1a2e]/50 rounded-2xl p-8 shadow-lg mt-12">
                             <h3 className="text-2xl font-serif font-bold text-[#1a1a2e] dark:text-white mb-6">
@@ -150,32 +236,65 @@ export function TreatmentDetail() {
                             </div>
                         </div>
 
-                        {/* Pricing */}
-                        {treatment.prices.length > 0 && (
-                            <div className="bg-[#c9a961]/10 rounded-2xl p-8 mt-8">
-                                <h3 className="text-2xl font-serif font-bold text-[#1a1a2e] dark:text-white mb-6">
-                                    {isNl ? 'Tarieven' : 'Prices'}
-                                </h3>
-                                <div className="space-y-0">
-                                    {treatment.prices.map((price, index) => (
-                                        <div
-                                            key={index}
-                                            className={`flex items-center justify-between py-4 ${index < treatment.prices.length - 1 ? 'border-b border-[#c9a961]/20' : ''
-                                                }`}
-                                        >
-                                            <div>
-                                                <span className="text-gray-700 dark:text-gray-300">{price.name}</span>
-                                                {price.note && (
-                                                    <span className="block text-sm text-gray-500 dark:text-gray-400 mt-0.5">{price.note}</span>
-                                                )}
+                        {/* Pricing link */}
+                        <div className="bg-[#c9a961]/10 rounded-2xl p-8 mt-8 text-center">
+                            <h3 className="text-2xl font-serif font-bold text-[#1a1a2e] dark:text-white mb-3">
+                                {isNl ? 'Tarieven' : 'Pricing'}
+                            </h3>
+                            <p className="text-gray-600 dark:text-gray-300 mb-6">
+                                {isNl
+                                    ? 'Bekijk onze actuele tarieven voor alle behandelingen op onze prijzenpagina.'
+                                    : 'View our current pricing for all treatments on our pricing page.'}
+                            </p>
+                            <Link
+                                to="/prijzen"
+                                className="inline-flex items-center gap-2 px-8 py-4 bg-[#c9a961] hover:bg-[#b8944f] text-white font-semibold rounded-full transition-all shadow-lg hover:shadow-xl hover:scale-105"
+                            >
+                                {isNl ? 'Bekijk tarieven' : 'View pricing'} <ArrowRight className="w-5 h-5" />
+                            </Link>
+                        </div>
+
+                        {/* Aftercare */}
+                        {treatment.aftercare && treatment.aftercare[isNl ? 'nl' : 'en'].length > 0 && (
+                            <div className="bg-gradient-to-br from-amber-50 to-orange-50 dark:from-[#1a1a2e] dark:to-[#1a1a2e]/80 rounded-2xl p-8 mt-8 border border-amber-200/50 dark:border-[#c9a961]/20">
+                                <div className="flex items-center gap-3 mb-4">
+                                    <AlertCircle className="w-6 h-6 text-[#c9a961]" />
+                                    <h3 className="text-2xl font-serif font-bold text-[#1a1a2e] dark:text-white">
+                                        {isNl ? 'Nazorginstructies' : 'Aftercare Instructions'}
+                                    </h3>
+                                </div>
+                                <ul className="space-y-3">
+                                    {(isNl ? treatment.aftercare.nl : treatment.aftercare.en).map((item, index) => (
+                                        <li key={index} className="flex items-start gap-3">
+                                            <div className="w-6 h-6 bg-[#c9a961]/10 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                                                <Check className="w-3.5 h-3.5 text-[#c9a961]" />
                                             </div>
-                                            <span className="font-bold text-[#c9a961] text-lg">{price.price}</span>
-                                        </div>
+                                            <span className="text-gray-700 dark:text-gray-300">{item}</span>
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
+                        )}
+
+                        {/* FAQ Section */}
+                        {treatment.faq && treatment.faq.length > 0 && (
+                            <div className="mt-12">
+                                <div className="flex items-center gap-3 mb-6">
+                                    <HelpCircle className="w-6 h-6 text-[#c9a961]" />
+                                    <h3 className="text-2xl font-serif font-bold text-[#1a1a2e] dark:text-white">
+                                        {isNl ? 'Veelgestelde vragen' : 'Frequently Asked Questions'}
+                                    </h3>
+                                </div>
+                                <div className="space-y-3">
+                                    {treatment.faq.map((faqItem, index) => (
+                                        <FAQItem
+                                            key={index}
+                                            index={index}
+                                            question={isNl ? faqItem.question.nl : faqItem.question.en}
+                                            answer={isNl ? faqItem.answer.nl : faqItem.answer.en}
+                                        />
                                     ))}
                                 </div>
-                                <p className="text-sm text-gray-500 dark:text-gray-400 mt-4">
-                                    {isNl ? '* Prijzen zijn inclusief consult en nazorg' : '* Prices include consultation and aftercare'}
-                                </p>
                             </div>
                         )}
 
