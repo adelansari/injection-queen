@@ -13,6 +13,7 @@ import { Contact } from './pages/Contact';
 import { BlogIndex } from './pages/BlogIndex';
 import { BlogDetail } from './pages/BlogDetail';
 import { TreatmentDetail } from './pages/treatments/TreatmentDetail';
+import { CategoryDetail } from './pages/treatments/CategoryDetail';
 import './i18n';
 
 function App() {
@@ -33,6 +34,7 @@ function App() {
                 <Route path="/over-ons" element={<OverOns />} />
                 <Route path="/behandelingen" element={<Behandelingen />} />
                 <Route path="/behandelingen/:category/:slug" element={<TreatmentDetail />} />
+                <Route path="/behandelingen/:category" element={<CategoryDetail />} />
                 <Route path="/prijzen" element={<Prijzen />} />
                 <Route path="/contact" element={<Contact />} />
 
