@@ -12,10 +12,6 @@ export function Home() {
     <>
       {/* Hero Section */}
       <section className="relative min-h-screen flex items-center overflow-hidden bg-gradient-to-br from-[#faf8f5] via-white to-[#e8d5c4]/30 dark:from-[#0f0f1a] dark:via-[#1a1a2e] dark:to-[#1a1a2e]/50 pt-20">
-        <div className="absolute inset-0 overflow-hidden">
-          <motion.div animate={{ scale: [1, 1.2, 1], rotate: [0, 90, 0] }} transition={{ duration: 20, repeat: Infinity, ease: 'linear' }}
-            className="absolute -top-1/4 -right-1/4 w-[600px] h-[600px] rounded-full bg-[#c9a961]/10 blur-3xl" />
-        </div>
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-0">
           <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
             <div className="text-center lg:text-left">
@@ -63,7 +59,7 @@ export function Home() {
             <motion.div initial={{ opacity: 0, x: 50 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.3 }} className="hidden lg:block">
               <div className="relative">
                 <img 
-                  src="/images/home/hero.jpg" 
+                  src="/images/home/hero02.jpg" 
                   alt="Injection Queen Kliniek"
                   className="w-full h-[600px] object-cover rounded-2xl shadow-2xl"
                   onError={(e) => {
