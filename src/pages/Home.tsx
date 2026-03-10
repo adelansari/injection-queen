@@ -21,9 +21,9 @@ export function Home() {
               </motion.div>
               <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
                 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-serif font-bold text-[#1a1a2e] dark:text-white leading-tight mb-6">
-                {t('home.hero.title').split(' ').map((word, i) => 
-                  word === 'schoonheid' || word === 'beauty' ? 
-                    <span key={i} className="bg-gradient-to-r from-[#c9a961] to-[#d4a574] bg-clip-text text-transparent">{word} </span> : 
+                {t('home.hero.title').split(' ').map((word, i) =>
+                  word === 'schoonheid' || word === 'beauty' ?
+                    <span key={i} className="bg-gradient-to-r from-[#c9a961] to-[#d4a574] bg-clip-text text-transparent">{word} </span> :
                     <span key={i}>{word} </span>
                 )}
               </motion.h1>
@@ -58,8 +58,8 @@ export function Home() {
             </div>
             <motion.div initial={{ opacity: 0, x: 50 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.3 }} className="hidden lg:block">
               <div className="relative">
-                <img 
-                  src="/images/home/hero02.jpg" 
+                <img
+                  src="/images/home/hero02.jpg"
                   alt="Injection Queen Kliniek"
                   className="w-full h-[600px] object-cover rounded-2xl shadow-2xl"
                   onError={(e) => {
@@ -69,7 +69,7 @@ export function Home() {
                   }}
                 />
                 {/* Floating Badge */}
-                <motion.div 
+                <motion.div
                   initial={{ opacity: 0, scale: 0.8 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ delay: 0.6 }}
@@ -108,8 +108,8 @@ export function Home() {
               <motion.div key={index} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.1 }}
                 whileHover={{ y: -8 }} className="group bg-gradient-to-br from-[#faf8f5] to-white dark:from-[#1a1a2e] dark:to-[#1a1a2e]/50 rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all">
                 <div className="aspect-video overflow-hidden">
-                  <img 
-                    src={treatment.img} 
+                  <img
+                    src={treatment.img}
                     alt={treatment.title}
                     className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
                     onError={(e) => {
@@ -130,7 +130,7 @@ export function Home() {
       </section>
 
       {/* About Preview */}
-      <section className="py-24 bg-gradient-to-b from-white via-[#faf8f5]/30 to-white dark:from-[#0f0f1a] dark:via-[#1a1a2e]/30 dark:to-[#0f0f1a]">
+      <section className="py-24 bg-gradient-to-b from-white via-[#faf8f5]/30 to-white dark:from-[#0f0f1a] dark:via-[#1a1a2e]/30 dark:to-[#0f0f1a] overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
             <motion.div initial={{ opacity: 0, x: -50 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }}>
@@ -150,8 +150,8 @@ export function Home() {
             </motion.div>
             <motion.div initial={{ opacity: 0, x: 50 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }}>
               <div className="relative">
-                <img 
-                  src="/images/about/zainab-haidari.jpg" 
+                <img
+                  src="/images/about/zainab-haidari.jpg"
                   alt="Zainab Haidari - Injection Queen"
                   className="w-full h-[500px] object-cover rounded-2xl shadow-2xl"
                   onError={(e) => {
@@ -160,12 +160,12 @@ export function Home() {
                   }}
                 />
                 {/* Experience Badge */}
-                <motion.div 
+                <motion.div
                   initial={{ opacity: 0, scale: 0.8 }}
                   whileInView={{ opacity: 1, scale: 1 }}
                   viewport={{ once: true }}
                   transition={{ delay: 0.3 }}
-                  className="absolute -bottom-4 -right-4 bg-[#c9a961] text-white rounded-xl shadow-xl p-4"
+                  className="absolute -bottom-4 -right-4 sm:right-4 bg-[#c9a961] text-white rounded-xl shadow-xl p-4"
                 >
                   <p className="text-3xl font-bold">5+</p>
                   <p className="text-sm">Jaar ervaring</p>
@@ -179,9 +179,9 @@ export function Home() {
       {/* Instagram Feed Section */}
       <section className="py-24 bg-white dark:bg-[#0f0f1a]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div 
-            initial={{ opacity: 0, y: 30 }} 
-            whileInView={{ opacity: 1, y: 0 }} 
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             className="text-center mb-12"
           >
@@ -196,7 +196,7 @@ export function Home() {
               Blijf op de hoogte van de nieuwste behandelingen, resultaten en nieuws van Injection Queen
             </p>
           </motion.div>
-          
+
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -217,8 +217,8 @@ export function Home() {
           <div className="grid md:grid-cols-2 gap-8">
             <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="bg-gradient-to-br from-[#faf8f5] to-white dark:from-[#1a1a2e] dark:to-[#1a1a2e]/50 rounded-2xl overflow-hidden shadow-lg">
               <div className="aspect-video overflow-hidden">
-                <img 
-                  src="/images/locations/amsterdam.jpg" 
+                <img
+                  src="/images/locations/amsterdam.jpg"
                   alt="Injection Queen Amsterdam"
                   className="w-full h-full object-cover"
                   onError={(e) => {
@@ -240,8 +240,8 @@ export function Home() {
             </motion.div>
             <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.1 }} className="bg-gradient-to-br from-[#faf8f5] to-white dark:from-[#1a1a2e] dark:to-[#1a1a2e]/50 rounded-2xl overflow-hidden shadow-lg">
               <div className="aspect-video overflow-hidden bg-gray-200 dark:bg-gray-700">
-                <img 
-                  src="/images/locations/amsterdam.jpg" 
+                <img
+                  src="/images/locations/amsterdam.jpg"
                   alt="Injection Queen Spijkenisse - Binnenkort"
                   className="w-full h-full object-cover opacity-50"
                   onError={(e) => {

@@ -46,8 +46,8 @@ export function Navbar() {
   return (
     <>
       {/* Skip to content link for accessibility */}
-      <a 
-        href="#main-content" 
+      <a
+        href="#main-content"
         className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 z-[60] bg-[#c9a961] text-white px-4 py-2 rounded-lg shadow-lg"
       >
         {i18n.language === 'nl' ? 'Ga naar inhoud' : 'Skip to content'}
@@ -58,23 +58,22 @@ export function Navbar() {
         initial={{ y: -100, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-          isScrolled 
-            ? 'bg-white/80 dark:bg-[#0f0f1a]/80 backdrop-blur-xl shadow-lg' 
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${isScrolled
+            ? 'bg-white/80 dark:bg-[#0f0f1a]/80 backdrop-blur-xl shadow-lg'
             : 'bg-transparent'
-        }`}
+          }`}
       >
         <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-20 lg:h-24">
             {/* Logo */}
             <Link to="/" className="relative group">
-              <motion.div 
+              <motion.div
                 className="flex items-center"
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
               >
-                <img 
-                  src={LogoSvg} 
+                <img
+                  src={LogoSvg}
                   alt="Injection Queen"
                   className="h-10 lg:h-12 w-auto dark:invert dark:brightness-200 transition-all duration-300"
                 />
@@ -92,24 +91,23 @@ export function Navbar() {
                 >
                   <Link
                     to={item.href}
-                    className={`relative px-4 py-2 text-sm font-medium transition-colors ${
-                      isActive(item.href)
+                    className={`relative px-4 py-2 text-sm font-medium transition-colors ${isActive(item.href)
                         ? 'text-[#c9a961]'
                         : 'text-gray-700 dark:text-gray-300 hover:text-[#c9a961]'
-                    }`}
+                      }`}
                   >
                     {item.label}
-                    
+
                     {/* Animated underline */}
                     <motion.span
                       className="absolute bottom-0 left-4 right-4 h-0.5 bg-[#c9a961] origin-left"
                       initial={{ scaleX: 0 }}
-                      animate={{ 
-                        scaleX: isActive(item.href) || hoveredItem === item.href ? 1 : 0 
+                      animate={{
+                        scaleX: isActive(item.href) || hoveredItem === item.href ? 1 : 0
                       }}
                       transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
                     />
-                    
+
                     {/* Glow effect on hover */}
                     <AnimatePresence>
                       {hoveredItem === item.href && (
@@ -244,15 +242,15 @@ export function Navbar() {
               {/* Mobile Header */}
               <div className="flex items-center justify-between p-6 border-b border-gray-100 dark:border-gray-800">
                 <Link to="/" className="flex items-center" onClick={() => setIsMenuOpen(false)}>
-                <img 
-                  src={LogoSvg} 
-                  alt="Injection Queen"
-                  className="h-8 w-auto dark:invert dark:brightness-200 transition-all duration-300"
-                />
-              </Link>
+                  <img
+                    src={LogoSvg}
+                    alt="Injection Queen"
+                    className="h-8 w-auto dark:invert dark:brightness-200 transition-all duration-300"
+                  />
+                </Link>
                 <button
                   onClick={() => setIsMenuOpen(false)}
-                  className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                  className="p-2 rounded-full text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
                 >
                   <X className="w-6 h-6" />
                 </button>
@@ -271,16 +269,14 @@ export function Navbar() {
                       <Link
                         to={item.href}
                         onClick={() => setIsMenuOpen(false)}
-                        className={`group flex items-center justify-between p-4 rounded-xl text-lg font-medium transition-all ${
-                          isActive(item.href)
+                        className={`group flex items-center justify-between p-4 rounded-xl text-lg font-medium transition-all ${isActive(item.href)
                             ? 'bg-[#c9a961]/10 text-[#c9a961]'
                             : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800'
-                        }`}
+                          }`}
                       >
                         {item.label}
-                        <ArrowRight className={`w-5 h-5 transition-transform ${
-                          isActive(item.href) ? 'translate-x-0 opacity-100' : '-translate-x-2 opacity-0 group-hover:translate-x-0 group-hover:opacity-100'
-                        }`} />
+                        <ArrowRight className={`w-5 h-5 transition-transform ${isActive(item.href) ? 'translate-x-0 opacity-100' : '-translate-x-2 opacity-0 group-hover:translate-x-0 group-hover:opacity-100'
+                          }`} />
                       </Link>
                     </motion.li>
                   ))}
