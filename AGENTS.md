@@ -38,7 +38,11 @@ Injection Queen is a multilingual (Dutch/English) React website for a cosmetic c
 │   │   ├── home/             # Homepage images
 │   │   ├── instagram/        # Instagram feed images
 │   │   ├── locations/        # Location photos
-│   │   └── treatments/       # Treatment images
+│   │   └── treatments/       # Treatment hero images (category/slug/hero.jpg)
+│   │       ├── botox/        # 13 botox treatment images
+│   │       ├── filler-behandelingen/  # 9 filler images
+│   │       ├── hair-skin-boosters/    # 7 booster images
+│   │       └── fat-dissolving/        # 2 fat dissolving images
 │   └── logo/                 # Logo assets
 ├── src/
 │   ├── blog/                 # Blog system
@@ -57,6 +61,13 @@ Injection Queen is a multilingual (Dutch/English) React website for a cosmetic c
 │   │   ├── PlaceholderImage.tsx
 │   │   └── ScrollToTop.tsx
 │   ├── data/               # Static data files
+│   │   └── treatments/     # Treatment data (modular structure)
+│   │       ├── types.ts     # Treatment, FAQ, TreatmentStep interfaces
+│   │       ├── index.ts     # Barrel file with exports and helpers
+│   │       ├── botox/       # 13 individual botox treatment files
+│   │       ├── filler-behandelingen/  # 9 filler treatment files
+│   │       ├── hair-skin-boosters/    # 7 booster treatment files
+│   │       └── fat-dissolving/        # 2 fat dissolving treatment files
 │   ├── hooks/              # Custom React hooks
 │   │   └── useTheme.tsx    # Dark/light mode context
 │   ├── i18n/               # Internationalization
@@ -65,12 +76,12 @@ Injection Queen is a multilingual (Dutch/English) React website for a cosmetic c
 │   │   │   └── en.json    # English translations
 │   │   └── index.ts        # i18n configuration
 │   ├── pages/              # Page components (route handlers)
-│   │   ├── treatments/     # Treatment detail pages
-│   │   ├── Behandelingen.tsx
-│   │   ├── Blog.tsx
+│   │   ├── treatments/     # Treatment pages
+│   │   │   ├── TreatmentDetail.tsx  # Individual treatment page
+│   │   │   └── CategoryDetail.tsx   # Category landing page
+│   │   ├── Behandelingen.tsx  # All treatments overview
 │   │   ├── BlogDetail.tsx
 │   │   ├── BlogIndex.tsx
-│   │   ├── BlogPost.tsx
 │   │   ├── Contact.tsx
 │   │   ├── Home.tsx
 │   │   ├── OverOns.tsx
@@ -148,23 +159,82 @@ All environment variables must be prefixed with `VITE_` to be exposed to the cli
 |-------|-----------|-------------|
 | `/` | Home | Landing page with hero, treatments, about |
 | `/over-ons` | OverOns | About page with specialist info |
-| `/behandelingen` | Behandelingen | All treatments listing |
-| `/prijzen` | Prijzen | Pricing page |
+| `/behandelingen` | Behandelingen | All treatments listing by category |
+| `/behandelingen/:category` | CategoryDetail | Category landing page (botox, fillers, etc.) |
+| `/behandelingen/:category/:slug` | TreatmentDetail | Individual treatment page |
+| `/prijzen` | Prijzen | Pricing page (single source of truth for prices) |
 | `/contact` | Contact | Contact form and info |
 | `/blog` | BlogIndex | Blog listing with search/filter |
 | `/blog/:datetime/:slug` | BlogDetail | Individual blog post |
-| `/voorhoofdrimpels` | Voorhoofdrimpels | Treatment detail |
-| `/lippen` | Lippen | Treatment detail |
-| `/kin` | Kin | Treatment detail |
-| `/kraaienpootjes` | Kraaienpootjes | Treatment detail |
 
-### 2. Theme System
+**Example treatment URLs:**
+- `/behandelingen/botox/fronsrimpels`
+- `/behandelingen/filler-behandelingen/lip-fillers`
+- `/behandelingen/hair-skin-boosters/sculptra`
+- `/behandelingen/fat-dissolving/lemon-bottle`
+
+### 2. Treatment Data System
+
+Treatments are organized as individual TypeScript files in `src/data/treatments/`:
+
+**Categories:**
+| Internal Key | URL Slug | Name |
+|---|---|---|
+| `botox` | `botox` | Botox (13 treatments) |
+| `fillers` | `filler-behandelingen` | Fillers (9 treatments) |
+| `boosters` | `hair-skin-boosters` | Hair & Skin Boosters (7 treatments) |
+| `fat-dissolving` | `fat-dissolving` | Fat Dissolving (2 treatments) |
+
+**Treatment interface (`types.ts`):**
+```typescript
+interface Treatment {
+    slug: string;
+    category: 'botox' | 'fillers' | 'boosters' | 'fat-dissolving';
+    categorySlug: string;           // URL-friendly category slug
+    categoryLabel: { nl: string; en: string };
+    name: { nl: string; en: string };
+    shortDesc: { nl: string; en: string };
+    description: { nl: string; en: string };
+    metaDescription?: { nl: string; en: string };
+    details: { nl: string[]; en: string[] };
+    steps?: TreatmentStep[];        // Step-by-step process
+    faq?: FAQ[];                    // Frequently asked questions
+    aftercare: { nl: string[]; en: string[] };
+    image?: string;                 // Hero image path
+    duration?: string;
+    resultDuration?: string;
+}
+```
+
+**Adding a Treatment:**
+1. Create file: `src/data/treatments/{category}/{slug}.ts`
+2. Add hero image: `public/images/treatments/{category}/{slug}/hero.jpg`
+3. Import and add to array in `src/data/treatments/index.ts`
+4. The treatment automatically appears on the category and overview pages
+
+**Important:** Prices are NOT stored in treatment files. The `Prijzen.tsx` page is the single source of truth for pricing.
+
+### 3. Category Landing Pages
+
+Each category has a dedicated landing page (`CategoryDetail.tsx`) featuring:
+- Hero section with category image and CTA buttons
+- Intro content explaining the treatment type
+- Suitability information (who is it for?)
+- Grid of all treatments in the category with cards
+- Step-by-step treatment process
+- Link to pricing page
+- FAQ accordion with expand/collapse animations
+- Bottom CTA for booking
+
+Content is inline in `CategoryDetail.tsx` using the `categoryContent` object.
+
+### 4. Theme System
 - Dark/light mode toggle in navbar
 - Theme persisted to localStorage
 - CSS classes: `dark:` prefix for dark mode styles
 - System preference detection via `prefers-color-scheme`
 
-### 3. Blog System
+### 5. Blog System
 - Posts stored as TypeScript modules in `src/blog/posts/`
 - Date-based URLs: `/blog/YYYY-MM-DD-HH-MM/slug`
 - Bilingual content (Dutch primary, English secondary)
@@ -177,7 +247,7 @@ All environment variables must be prefixed with `VITE_` to be exposed to the cli
 3. Import and register in `src/blog/registry.ts`
 4. Follow template in `src/blog/template.ts.example`
 
-### 4. Booking System
+### 6. Booking System
 - Service catalog with pricing in `src/services/bookingService.ts`
 - Combo discounts (10% Botox+Fillers, 15% 3+ zones)
 - Multiple submission methods:
@@ -186,11 +256,12 @@ All environment variables must be prefixed with `VITE_` to be exposed to the cli
   3. WhatsApp fallback (default)
 - ClinicMinds integration (partial/mock)
 
-### 5. Internationalization
+### 7. Internationalization
 - Translation keys organized by page/feature
 - Language toggle in navbar (desktop & mobile)
 - Default Dutch, English fallback
 - LocalStorage persistence
+- Treatment content is bilingual in data files (not via i18n keys)
 
 ## Design System
 
@@ -241,6 +312,7 @@ dark: {
 - Components: PascalCase (e.g., `Navbar.tsx`)
 - Utilities/hooks: camelCase (e.g., `useTheme.tsx`)
 - Pages: PascalCase matching route name
+- Treatment files: kebab-case matching slug (e.g., `lip-fillers.ts`)
 - Blog posts: `YYYY-MM-DD-hh-mm-slug.ts`
 
 ### Imports
@@ -258,7 +330,7 @@ import { Navbar } from '../components/Navbar';
 import { useTheme } from '../hooks/useTheme';
 
 // Types
-import type { BlogPost } from '../blog/types';
+import type { Treatment } from '../data/treatments/types';
 
 // Styles last
 import './index.css';
@@ -298,6 +370,8 @@ This is a static site suitable for:
 ### SEO
 - Meta tags in `index.html` (Dutch)
 - React Helmet Async for dynamic titles on blog pages
+- Per-treatment `metaDescription` fields for SEO-optimized descriptions
+- Category-based URL structure improves crawlability
 - Sitemap should be generated and submitted to search engines
 - Robots: `index, follow` enabled
 
