@@ -143,20 +143,66 @@ src/
 ## 🌍 Environment Variables
 
 ```bash
-VITE_CLINICMINDS_CLINIC_ID=   # ClinicMinds booking integration
+# ClinicMinds Booking Integration
+VITE_CLINICMINDS_BEARER_TOKEN=your_bearer_token  # Required for API access
+VITE_CLINICMINDS_LOCATION_UUID=your_location_uuid # Required for API access
+VITE_CLINICMINDS_CLINIC_ID=your_clinic_id
 VITE_CLINICMINDS_LOCALE=nl-NL
+
+# Optional Integrations
 VITE_API_URL=                 # Custom API backend (optional)
 VITE_EMAILJS_SERVICE_ID=      # EmailJS fallback (optional)
 VITE_EMAILJS_TEMPLATE_ID=
 VITE_EMAILJS_PUBLIC_KEY=
 ```
 
-## 📦 Deployment
+## 📦 Deployment & ClinicMinds Proxy
 
-Static site — deploy to Vercel, Netlify, or any static file server:
+To avoid CORS (Cross-Origin Resource Sharing) errors when fetching data from the ClinicMinds API, requests must be proxied through your server to `https://schedule.clinicminds.com`.
 
-```bash
-npm run build   # Output: dist/
+### 💻 Local Development
+Simply run `npm run dev`. Vite’s built-in development server automatically handles the proxy configuration (configured in `vite.config.ts`), routing all `/api/clinicminds/*` requests correctly.
+
+### 🌐 Production Deployment
+When doing a production build (`npm run build`), Vite creates static files (`dist/`). Because the app becomes a bundle of static HTML/JS/CSS, the Vite dev server no longer runs. **You must configure a reverse proxy on your hosting provider.**
+
+Here is how you configure the proxy on different platforms so that any request to `/api/clinicminds/...` is rewritten to `https://schedule.clinicminds.com/...`:
+
+#### Vercel
+Create a `vercel.json` file in the root of your project:
+```json
+{
+  "rewrites": [
+    {
+      "source": "/api/clinicminds/:path*",
+      "destination": "https://schedule.clinicminds.com/:path*"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
+}
+```
+
+#### Netlify
+Add a `_redirects` file in your `public` folder:
+```
+/api/clinicminds/*  https://schedule.clinicminds.com/:splat  200
+/*                  /index.html                               200
+```
+
+#### Nginx (Custom VPS/Server)
+If you are hosting the static files yourself using Nginx, add this location block to your server config:
+```nginx
+location /api/clinicminds/ {
+    proxy_pass https://schedule.clinicminds.com/;
+    proxy_ssl_server_name on;
+}
+
+location / {
+    try_files $uri $uri/ /index.html;
+}
 ```
 
 ## 📝 License
