@@ -1,34 +1,52 @@
-import { useState, useEffect, useMemo } from 'react';
-import { motion } from 'framer-motion';
-import { 
-  Clock, User, Mail, Phone, MessageSquare, Check, Loader2, 
-  ChevronLeft, ExternalLink, Info,
-  Sparkles, X
+import { useState, useEffect, useMemo, useCallback } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import {
+  Clock, User, Mail, Phone, MessageSquare, Check, Loader2,
+  ChevronLeft, ChevronRight, ExternalLink, Info,
+  Sparkles, X, CreditCard, Calendar
 } from 'lucide-react';
-import { 
-  fetchServices, 
+import {
+  fetchServices,
+  fetchAppointmentTypes,
   fetchAvailability,
-  createBooking,
   generateWhatsAppBooking,
   getClinicMindsBookingUrl,
   formatPrice,
-  formatDuration,
-  getCategoryLabel,
-  type ClinicMindsService,
-  type ClinicMindsAvailability
+  getAppointmentTypeLabel,
+  getPrepaymentForType,
+  type CMService,
+  type CMServiceCategory,
+  type CMAppointmentTypesResponse,
+  type CMAvailabilitySlot,
+  type AppointmentType,
 } from '../services/clinicMindsApi';
 
-type Step = 'service' | 'datetime' | 'details' | 'confirm' | 'success';
+// ============================================
+// TYPES
+// ============================================
+
+type Step = 'service' | 'appointmentType' | 'datetime' | 'details' | 'confirm';
+
+// ============================================
+// COMPONENT
+// ============================================
 
 export function ClinicMindsBooking() {
+  // --- Step state ---
   const [step, setStep] = useState<Step>('service');
-  const [services, setServices] = useState<ClinicMindsService[]>([]);
-  const [selectedService, setSelectedService] = useState<ClinicMindsService | null>(null);
-  const [availability, setAvailability] = useState<ClinicMindsAvailability | null>(null);
-  
-  const [selectedDate, setSelectedDate] = useState<string>('');
-  const [selectedTime, setSelectedTime] = useState<string>('');
-  
+
+  // --- Data state ---
+  const [categories, setCategories] = useState<CMServiceCategory[]>([]);
+  const [expandedCategory, setExpandedCategory] = useState<string | null>(null);
+
+  // --- Selection state ---
+  const [selectedServices, setSelectedServices] = useState<CMService[]>([]);
+  const [appointmentTypesData, setAppointmentTypesData] = useState<CMAppointmentTypesResponse | null>(null);
+  const [selectedAppointmentType, setSelectedAppointmentType] = useState<AppointmentType | null>(null);
+  const [availabilitySlots, setAvailabilitySlots] = useState<CMAvailabilitySlot[]>([]);
+  const [selectedSlot, setSelectedSlot] = useState<CMAvailabilitySlot | null>(null);
+
+  // --- Patient form ---
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -36,324 +54,531 @@ export function ClinicMindsBooking() {
     phone: '',
     notes: '',
   });
-  
+
+  // --- UI state ---
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [bookingResult, setBookingResult] = useState<{
-    success: boolean;
-    bookingId?: string;
-    confirmationUrl?: string;
-  } | null>(null);
 
-  // Load services on mount
+  // ============================================
+  // LOAD SERVICES ON MOUNT
+  // ============================================
+
   useEffect(() => {
-    loadServices();
+    let cancelled = false;
+    (async () => {
+      setLoading(true);
+      try {
+        const data = await fetchServices();
+        if (!cancelled) {
+          setCategories(data.categories);
+        }
+      } catch {
+        if (!cancelled) setError('Kon behandelingen niet laden. Probeer het later opnieuw.');
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    })();
+    return () => { cancelled = true; };
   }, []);
 
-  const loadServices = async () => {
-    setLoading(true);
-    try {
-      const data = await fetchServices();
-      setServices(data);
-    } catch (err) {
-      setError('Failed to load services');
-    } finally {
-      setLoading(false);
-    }
-  };
+  // ============================================
+  // HANDLERS
+  // ============================================
 
-  // Load availability when date is selected
-  useEffect(() => {
-    if (selectedDate && selectedService) {
-      loadAvailability(selectedDate, selectedService.id);
-    }
-  }, [selectedDate, selectedService]);
-
-  const loadAvailability = async (date: string, serviceId: string) => {
-    setLoading(true);
-    setAvailability(null);
-    setSelectedTime('');
-    try {
-      const data = await fetchAvailability(date, serviceId);
-      setAvailability(data);
-    } catch (err) {
-      setError('Failed to load availability');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Group services by category
-  const servicesByCategory = useMemo(() => {
-    const grouped: Record<string, ClinicMindsService[]> = {};
-    services.forEach(service => {
-      const cat = service.category || 'other';
-      if (!grouped[cat]) grouped[cat] = [];
-      grouped[cat].push(service);
+  const toggleServiceSelection = useCallback((service: CMService) => {
+    setSelectedServices(prev => {
+      const exists = prev.find(s => s.id === service.id);
+      if (exists) return prev.filter(s => s.id !== service.id);
+      return [...prev, service];
     });
-    return grouped;
-  }, [services]);
+  }, []);
 
-  const categories = Object.keys(servicesByCategory).sort((a, b) => {
-    if (a === 'consultatie') return -1;
-    if (b === 'consultatie') return 1;
-    return a.localeCompare(b);
-  });
-
-  const handleServiceSelect = (service: ClinicMindsService) => {
-    setSelectedService(service);
-    setStep('datetime');
-  };
-
-  const handleDateTimeConfirm = () => {
-    if (selectedDate && selectedTime) {
-      setStep('details');
-    }
-  };
-
-  const handleSubmit = async () => {
-    if (!selectedService || !selectedDate || !selectedTime) return;
-    
+  const handleServicesNext = useCallback(async () => {
+    if (selectedServices.length === 0) return;
     setLoading(true);
     setError(null);
-    
     try {
-      const result = await createBooking({
-        serviceId: selectedService.id,
-        date: selectedDate,
-        time: selectedTime,
-        patient: formData,
-      });
-      
-      if (result.success) {
-        setBookingResult({
-          success: true,
-          bookingId: result.bookingId,
-          confirmationUrl: result.confirmationUrl,
-        });
-        setStep('success');
+      // Fetch appointment types for the first selected service
+      const data = await fetchAppointmentTypes(selectedServices[0].id);
+      setAppointmentTypesData(data);
+
+      // If only one appointment type, auto-select it
+      if (data.appointmentTypes.length === 1) {
+        setSelectedAppointmentType(data.appointmentTypes[0]);
+        // Skip appointment type step, go straight to availability
+        await loadAvailability(data.appointmentTypes[0]);
+        setStep('datetime');
       } else {
-        setError(result.message || 'Booking failed');
+        setStep('appointmentType');
       }
-    } catch (err) {
-      setError('An unexpected error occurred');
+    } catch {
+      setError('Kon afspraaktypes niet laden.');
     } finally {
       setLoading(false);
     }
-  };
+  }, [selectedServices]);
 
-  const handleWhatsAppFallback = () => {
-    if (!selectedService || !selectedDate || !selectedTime) return;
-    
-    const url = generateWhatsAppBooking(
-      selectedService,
-      selectedDate,
-      selectedTime,
-      `${formData.firstName} ${formData.lastName}`
-    );
-    window.open(url, '_blank');
-  };
-
-  const goBack = () => {
-    if (step === 'datetime') setStep('service');
-    else if (step === 'details') setStep('datetime');
-    else if (step === 'confirm') setStep('details');
-  };
-
-  // Generate next 30 days
-  const availableDates = useMemo(() => {
-    const dates = [];
-    const today = new Date();
-    for (let i = 0; i < 30; i++) {
-      const date = new Date(today);
-      date.setDate(today.getDate() + i);
-      dates.push({
-        value: date.toISOString().split('T')[0],
-        label: date.toLocaleDateString('nl-NL', { weekday: 'short', day: 'numeric', month: 'short' }),
-        dayName: date.toLocaleDateString('nl-NL', { weekday: 'long' }),
-        isWeekend: date.getDay() === 0 || date.getDay() === 6,
-      });
+  const loadAvailability = useCallback(async (appointmentType: AppointmentType) => {
+    setLoading(true);
+    setError(null);
+    setAvailabilitySlots([]);
+    setSelectedSlot(null);
+    try {
+      const services = selectedServices.map(s => ({
+        serviceId: s.id,
+        appointmentType,
+      }));
+      const slots = await fetchAvailability(services);
+      setAvailabilitySlots(slots);
+    } catch {
+      setError('Kon beschikbare tijden niet laden.');
+    } finally {
+      setLoading(false);
     }
-    return dates;
+  }, [selectedServices]);
+
+  const handleAppointmentTypeSelect = useCallback(async (type: AppointmentType) => {
+    setSelectedAppointmentType(type);
+    await loadAvailability(type);
+    setStep('datetime');
+  }, [loadAvailability]);
+
+  const handleSlotSelect = useCallback((slot: CMAvailabilitySlot) => {
+    setSelectedSlot(slot);
   }, []);
+
+  const handleDateTimeNext = useCallback(() => {
+    if (selectedSlot) setStep('details');
+  }, [selectedSlot]);
+
+  const handleDetailsNext = useCallback(() => {
+    if (formData.firstName && formData.lastName && formData.email) {
+      setStep('confirm');
+    }
+  }, [formData]);
+
+  const handleConfirmBooking = useCallback(() => {
+    // Redirect to ClinicMinds for payment + final booking
+    const url = getClinicMindsBookingUrl(selectedServices[0]?.id);
+    window.open(url, '_blank');
+  }, [selectedServices]);
+
+  const handleWhatsAppFallback = useCallback(() => {
+    if (!selectedServices.length || !selectedSlot) return;
+    const slotDate = new Date(selectedSlot.start);
+    const dateStr = slotDate.toLocaleDateString('nl-NL', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+    const timeStr = slotDate.toLocaleTimeString('nl-NL', { hour: '2-digit', minute: '2-digit' });
+    const serviceNames = selectedServices.map(s => s.name).join(', ');
+    const url = generateWhatsAppBooking(serviceNames, dateStr, timeStr, `${formData.firstName} ${formData.lastName}`);
+    window.open(url, '_blank');
+  }, [selectedServices, selectedSlot, formData]);
+
+  const goBack = useCallback(() => {
+    if (step === 'appointmentType') {
+      setStep('service');
+      setAppointmentTypesData(null);
+      setSelectedAppointmentType(null);
+    } else if (step === 'datetime') {
+      if (appointmentTypesData && appointmentTypesData.appointmentTypes.length > 1) {
+        setStep('appointmentType');
+      } else {
+        setStep('service');
+        setAppointmentTypesData(null);
+        setSelectedAppointmentType(null);
+      }
+      setAvailabilitySlots([]);
+      setSelectedSlot(null);
+    } else if (step === 'details') {
+      setStep('datetime');
+    } else if (step === 'confirm') {
+      setStep('details');
+    }
+  }, [step, appointmentTypesData]);
+
+  const resetBooking = useCallback(() => {
+    setStep('service');
+    setSelectedServices([]);
+    setAppointmentTypesData(null);
+    setSelectedAppointmentType(null);
+    setAvailabilitySlots([]);
+    setSelectedSlot(null);
+    setFormData({ firstName: '', lastName: '', email: '', phone: '', notes: '' });
+    setError(null);
+  }, []);
+
+  // ============================================
+  // DERIVED DATA
+  // ============================================
+
+  // Group availability slots by date
+  const slotsByDate = useMemo(() => {
+    const map: Record<string, CMAvailabilitySlot[]> = {};
+    for (const slot of availabilitySlots) {
+      const d = new Date(slot.start);
+      const key = d.toISOString().split('T')[0];
+      if (!map[key]) map[key] = [];
+      map[key].push(slot);
+    }
+    return map;
+  }, [availabilitySlots]);
+
+  const availableDates = useMemo(() => Object.keys(slotsByDate).sort(), [slotsByDate]);
+
+  const [selectedDate, setSelectedDate] = useState<string>('');
+
+  // Reset selected date when availability changes
+  useEffect(() => {
+    if (availableDates.length > 0 && !availableDates.includes(selectedDate)) {
+      setSelectedDate(availableDates[0]);
+    }
+  }, [availableDates, selectedDate]);
+
+  const slotsForSelectedDate = useMemo(
+    () => (selectedDate ? slotsByDate[selectedDate] || [] : []),
+    [slotsByDate, selectedDate]
+  );
+
+  // Current prepayment fee
+  const currentPrepayment = useMemo(() => {
+    if (!selectedAppointmentType || !appointmentTypesData) return null;
+    return getPrepaymentForType(selectedAppointmentType, appointmentTypesData);
+  }, [selectedAppointmentType, appointmentTypesData]);
+
+  // ============================================
+  // STEP DEFINITIONS FOR PROGRESS BAR
+  // ============================================
+
+  const allSteps: Step[] = ['service', 'appointmentType', 'datetime', 'details', 'confirm'];
+  const currentStepIdx = allSteps.indexOf(step);
+
+  // ============================================
+  // RENDER
+  // ============================================
 
   return (
     <div className="w-full max-w-4xl mx-auto">
       {/* Progress Steps */}
       <div className="flex items-center justify-center mb-8">
-        {['service', 'datetime', 'details', 'confirm'].map((s, idx) => (
-          <div key={s} className="flex items-center">
-            <div className={`
-              w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium
-              ${step === s ? 'bg-[#c9a961] text-white' : 
-                ['datetime', 'details', 'confirm', 'success'].indexOf(step) > idx ? 'bg-green-500 text-white' : 
-                'bg-gray-200 dark:bg-gray-700 text-gray-500'}
-            `}>
-              {['datetime', 'details', 'confirm', 'success'].indexOf(step) > idx ? <Check className="w-4 h-4" /> : idx + 1}
+        {['Behandeling', 'Type', 'Datum & Tijd', 'Gegevens', 'Bevestig'].map((label, idx) => (
+          <div key={label} className="flex items-center">
+            <div className="flex flex-col items-center">
+              <div className={`
+                w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium transition-colors
+                ${idx === currentStepIdx ? 'bg-[#c9a961] text-white' :
+                  idx < currentStepIdx ? 'bg-green-500 text-white' :
+                  'bg-gray-200 dark:bg-gray-700 text-gray-500'}
+              `}>
+                {idx < currentStepIdx ? <Check className="w-4 h-4" /> : idx + 1}
+              </div>
+              <span className="text-[10px] text-gray-400 mt-1 hidden sm:block">{label}</span>
             </div>
-            {idx < 3 && (
-              <div className={`w-12 h-0.5 mx-2 ${['datetime', 'details', 'confirm', 'success'].indexOf(step) > idx ? 'bg-green-500' : 'bg-gray-200 dark:bg-gray-700'}`} />
+            {idx < 4 && (
+              <div className={`w-8 sm:w-12 h-0.5 mx-1 sm:mx-2 ${idx < currentStepIdx ? 'bg-green-500' : 'bg-gray-200 dark:bg-gray-700'}`} />
             )}
           </div>
         ))}
       </div>
 
       {/* Error Display */}
-      {error && (
-        <motion.div 
-          initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}
-          className="mb-6 p-4 bg-red-100 dark:bg-red-900/30 rounded-xl flex items-start gap-3"
-        >
-          <Info className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
-          <p className="text-red-600 dark:text-red-400 text-sm">{error}</p>
-          <button onClick={() => setError(null)} className="ml-auto">
-            <X className="w-4 h-4 text-red-400" />
-          </button>
-        </motion.div>
-      )}
+      <AnimatePresence>
+        {error && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}
+            className="mb-6 p-4 bg-red-100 dark:bg-red-900/30 rounded-xl flex items-start gap-3"
+          >
+            <Info className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
+            <p className="text-red-600 dark:text-red-400 text-sm">{error}</p>
+            <button onClick={() => setError(null)} className="ml-auto">
+              <X className="w-4 h-4 text-red-400" />
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
-      {/* Step 1: Select Service */}
+      {/* ========================================= */}
+      {/* STEP 1: SELECT SERVICES                   */}
+      {/* ========================================= */}
       {step === 'service' && (
         <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }}>
           <h3 className="text-2xl font-bold text-[#1a1a2e] dark:text-white mb-2">Kies een behandeling</h3>
-          <p className="text-gray-500 mb-6">Selecteer de behandeling die je wilt boeken</p>
-          
+          <p className="text-gray-500 mb-6">Selecteer de behandeling(en) die je wilt boeken</p>
+
           {loading ? (
             <div className="flex justify-center py-12">
               <Loader2 className="w-8 h-8 animate-spin text-[#c9a961]" />
             </div>
           ) : (
-            <div className="space-y-8">
-              {categories.map(category => (
-                <div key={category}>
-                  <h4 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-3">
-                    {getCategoryLabel(category)}
-                  </h4>
-                  <div className="grid sm:grid-cols-2 gap-3">
-                    {servicesByCategory[category].map(service => (
-                      <button
-                        key={service.id}
-                        onClick={() => handleServiceSelect(service)}
-                        className="group relative p-4 bg-white dark:bg-[#1a1a2e] border-2 border-gray-100 dark:border-gray-800 rounded-xl text-left hover:border-[#c9a961] transition-all"
+            <div className="space-y-3">
+              {categories.map(cat => (
+                <div key={cat.name} className="border border-gray-100 dark:border-gray-800 rounded-xl overflow-hidden">
+                  {/* Category header */}
+                  <button
+                    onClick={() => setExpandedCategory(expandedCategory === cat.name ? null : cat.name)}
+                    className="w-full flex items-center justify-between p-4 bg-gray-50 dark:bg-[#1a1a2e] hover:bg-gray-100 dark:hover:bg-[#1a1a2e]/80 transition-colors"
+                  >
+                    <span className="font-semibold text-[#1a1a2e] dark:text-white">{cat.name}</span>
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs text-gray-400">{cat.services.length} behandelingen</span>
+                      <ChevronRight className={`w-4 h-4 text-gray-400 transition-transform ${expandedCategory === cat.name ? 'rotate-90' : ''}`} />
+                    </div>
+                  </button>
+
+                  {/* Services in category */}
+                  <AnimatePresence>
+                    {expandedCategory === cat.name && (
+                      <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: 'auto', opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.2 }}
+                        className="overflow-hidden"
                       >
-                        <div className="flex justify-between items-start mb-2">
-                          <h5 className="font-semibold text-[#1a1a2e] dark:text-white group-hover:text-[#c9a961] transition-colors">
-                            {service.name}
-                          </h5>
-                          <span className="font-bold text-[#c9a961]">{formatPrice(service.price)}</span>
+                        <div className="p-3 space-y-2">
+                          {cat.services.map(service => {
+                            const isSelected = selectedServices.some(s => s.id === service.id);
+                            return (
+                              <button
+                                key={service.id}
+                                onClick={() => toggleServiceSelection(service)}
+                                className={`w-full flex items-center gap-3 p-3 rounded-lg text-left transition-all ${
+                                  isSelected
+                                    ? 'bg-[#c9a961]/10 border-2 border-[#c9a961]'
+                                    : 'bg-white dark:bg-[#0f0f1a] border-2 border-gray-100 dark:border-gray-800 hover:border-[#c9a961]/50'
+                                }`}
+                              >
+                                {/* Checkbox */}
+                                <div className={`w-5 h-5 rounded flex-shrink-0 flex items-center justify-center border-2 transition-colors ${
+                                  isSelected ? 'bg-[#c9a961] border-[#c9a961]' : 'border-gray-300 dark:border-gray-600'
+                                }`}>
+                                  {isSelected && <Check className="w-3 h-3 text-white" />}
+                                </div>
+
+                                {/* Service info */}
+                                <div className="flex-1 min-w-0">
+                                  <p className="font-medium text-[#1a1a2e] dark:text-white truncate">{service.name}</p>
+                                  {service.explanation && (
+                                    <p className="text-xs text-gray-500 mt-0.5 truncate">{service.explanation}</p>
+                                  )}
+                                </div>
+                              </button>
+                            );
+                          })}
                         </div>
-                        <p className="text-sm text-gray-500 mb-2">{service.description}</p>
-                        <div className="flex items-center gap-3 text-xs text-gray-400">
-                          <span className="flex items-center gap-1">
-                            <Clock className="w-3 h-3" /> {formatDuration(service.duration)}
-                          </span>
-                          {service.requiresConsultation && (
-                            <span className="text-amber-500 flex items-center gap-1">
-                              <Info className="w-3 h-3" /> Consultatie verplicht
-                            </span>
-                          )}
-                        </div>
-                        <div className="absolute inset-0 border-2 border-[#c9a961] rounded-xl opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity" />
-                      </button>
-                    ))}
-                  </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                 </div>
               ))}
+            </div>
+          )}
+
+          {/* Selected services summary */}
+          {selectedServices.length > 0 && (
+            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="mt-6">
+              <div className="bg-[#c9a961]/10 rounded-xl p-4 mb-4">
+                <p className="text-sm text-gray-500 mb-2">Geselecteerd ({selectedServices.length})</p>
+                <div className="space-y-1">
+                  {selectedServices.map(s => (
+                    <div key={s.id} className="flex items-center justify-between">
+                      <span className="text-sm font-medium text-[#1a1a2e] dark:text-white">{s.name}</span>
+                      <button
+                        onClick={() => toggleServiceSelection(s)}
+                        className="text-red-400 hover:text-red-500 text-xs"
+                      >
+                        <X className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <button
+                onClick={handleServicesNext}
+                disabled={loading}
+                className="w-full py-3 bg-[#c9a961] text-white font-semibold rounded-xl hover:bg-[#b8944f] transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+              >
+                {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <ChevronRight className="w-5 h-5" />}
+                Volgende
+              </button>
+            </motion.div>
+          )}
+        </motion.div>
+      )}
+
+      {/* ========================================= */}
+      {/* STEP 2: SELECT APPOINTMENT TYPE            */}
+      {/* ========================================= */}
+      {step === 'appointmentType' && appointmentTypesData && (
+        <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }}>
+          <button onClick={goBack} className="flex items-center gap-2 text-gray-500 hover:text-[#c9a961] mb-4">
+            <ChevronLeft className="w-4 h-4" /> Terug
+          </button>
+
+          <h3 className="text-2xl font-bold text-[#1a1a2e] dark:text-white mb-2">Selecteer een optie</h3>
+          <p className="text-gray-500 mb-6">Kies het type afspraak dat je wilt maken</p>
+
+          <div className="space-y-3">
+            {appointmentTypesData.appointmentTypes.map(type => {
+              const fee = getPrepaymentForType(type, appointmentTypesData);
+              return (
+                <button
+                  key={type}
+                  onClick={() => handleAppointmentTypeSelect(type)}
+                  disabled={loading}
+                  className="w-full p-4 bg-white dark:bg-[#0f0f1a] border-2 border-gray-100 dark:border-gray-800 rounded-xl text-left hover:border-[#c9a961] transition-all group disabled:opacity-50"
+                >
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h5 className="font-semibold text-[#1a1a2e] dark:text-white group-hover:text-[#c9a961] transition-colors">
+                        {getAppointmentTypeLabel(type)}
+                      </h5>
+                      {fee !== null && fee > 0 && (
+                        <div className="flex items-center gap-1.5 mt-1">
+                          <CreditCard className="w-3.5 h-3.5 text-amber-500" />
+                          <span className="text-sm text-amber-600 dark:text-amber-400">
+                            Betaling vereist: {formatPrice(fee)}
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                    <ChevronRight className="w-5 h-5 text-gray-400 group-hover:text-[#c9a961]" />
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+
+          {loading && (
+            <div className="flex items-center justify-center gap-2 mt-6 text-gray-500">
+              <Loader2 className="w-4 h-4 animate-spin" /> Beschikbaarheid laden...
             </div>
           )}
         </motion.div>
       )}
 
-      {/* Step 2: Select Date & Time */}
-      {step === 'datetime' && selectedService && (
+      {/* ========================================= */}
+      {/* STEP 3: DATE & TIME SELECTION              */}
+      {/* ========================================= */}
+      {step === 'datetime' && (
         <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }}>
           <button onClick={goBack} className="flex items-center gap-2 text-gray-500 hover:text-[#c9a961] mb-4">
             <ChevronLeft className="w-4 h-4" /> Terug
           </button>
-          
+
+          {/* Selection summary */}
           <div className="bg-[#c9a961]/10 rounded-xl p-4 mb-6">
-            <p className="text-sm text-gray-500">Geselecteerde behandeling</p>
-            <div className="flex justify-between items-center">
-              <h4 className="font-semibold text-[#1a1a2e] dark:text-white">{selectedService.name}</h4>
-              <span className="font-bold text-[#c9a961]">{formatPrice(selectedService.price)}</span>
-            </div>
-          </div>
-
-          <h3 className="text-2xl font-bold text-[#1a1a2e] dark:text-white mb-2">Kies een datum</h3>
-          
-          {/* Date Selection */}
-          <div className="mb-6">
-            <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
-              {availableDates.map(date => (
-                <button
-                  key={date.value}
-                  onClick={() => setSelectedDate(date.value)}
-                  disabled={date.isWeekend && date.dayName === 'zondag'}
-                  className={`flex-shrink-0 w-20 p-3 rounded-xl border-2 text-center transition-all ${
-                    selectedDate === date.value
-                      ? 'border-[#c9a961] bg-[#c9a961]/10'
-                      : date.isWeekend && date.dayName === 'zondag'
-                      ? 'border-gray-100 bg-gray-50 opacity-50 cursor-not-allowed'
-                      : 'border-gray-100 hover:border-[#c9a961]/50'
-                  }`}
-                >
-                  <p className={`text-xs ${selectedDate === date.value ? 'text-[#c9a961]' : 'text-gray-500'}`}>
-                    {date.label.split(' ')[0]}
-                  </p>
-                  <p className={`text-lg font-bold ${selectedDate === date.value ? 'text-[#c9a961]' : 'text-[#1a1a2e] dark:text-white'}`}>
-                    {date.label.split(' ')[1]}
-                  </p>
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Time Selection */}
-          {selectedDate && (
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-              <h4 className="font-semibold text-[#1a1a2e] dark:text-white mb-3">
-                Beschikbare tijden <span className="text-gray-400 font-normal">({formatDuration(selectedService.duration)} nodig)</span>
-              </h4>
-              
-              {loading ? (
-                <div className="flex items-center gap-2 text-gray-500">
-                  <Loader2 className="w-4 h-4 animate-spin" /> Tijden laden...
+            <div className="flex justify-between items-start">
+              <div>
+                <p className="text-sm text-gray-500">Behandeling</p>
+                <p className="font-semibold text-[#1a1a2e] dark:text-white">
+                  {selectedServices.map(s => s.name).join(' + ')}
+                </p>
+              </div>
+              {currentPrepayment !== null && currentPrepayment > 0 && (
+                <div className="text-right">
+                  <p className="text-sm text-gray-500">Aanbetaling</p>
+                  <p className="font-bold text-[#c9a961]">{formatPrice(currentPrepayment)}</p>
                 </div>
-              ) : availability?.available ? (
-                <div className="flex flex-wrap gap-2">
-                  {availability.slots
-                    .filter(slot => slot.available)
-                    .map(slot => (
+              )}
+            </div>
+            {selectedAppointmentType && (
+              <p className="text-xs text-gray-400 mt-1">{getAppointmentTypeLabel(selectedAppointmentType)}</p>
+            )}
+          </div>
+
+          <h3 className="text-2xl font-bold text-[#1a1a2e] dark:text-white mb-2">
+            <Calendar className="w-6 h-6 inline-block mr-2 text-[#c9a961]" />
+            Kies een datum & tijd
+          </h3>
+
+          {loading ? (
+            <div className="flex items-center gap-2 py-8 justify-center text-gray-500">
+              <Loader2 className="w-5 h-5 animate-spin" /> Beschikbare tijden laden...
+            </div>
+          ) : availableDates.length === 0 ? (
+            <div className="text-center py-8">
+              <p className="text-gray-500">Geen beschikbare tijden gevonden.</p>
+              <p className="text-sm text-gray-400 mt-2">Probeer een ander afspraaktype of neem contact op.</p>
+            </div>
+          ) : (
+            <>
+              {/* Date scroll */}
+              <div className="mb-6">
+                <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
+                  {availableDates.map(dateStr => {
+                    const d = new Date(dateStr + 'T12:00:00');
+                    const dayLabel = d.toLocaleDateString('nl-NL', { weekday: 'short' });
+                    const dayNum = d.getDate();
+                    const monthLabel = d.toLocaleDateString('nl-NL', { month: 'short' });
+                    return (
                       <button
-                        key={slot.time}
-                        onClick={() => setSelectedTime(slot.time)}
-                        className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-                          selectedTime === slot.time
-                            ? 'bg-[#c9a961] text-white'
-                            : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200'
+                        key={dateStr}
+                        onClick={() => { setSelectedDate(dateStr); setSelectedSlot(null); }}
+                        className={`flex-shrink-0 w-20 p-3 rounded-xl border-2 text-center transition-all ${
+                          selectedDate === dateStr
+                            ? 'border-[#c9a961] bg-[#c9a961]/10'
+                            : 'border-gray-100 dark:border-gray-800 hover:border-[#c9a961]/50'
                         }`}
                       >
-                        {slot.time}
+                        <p className={`text-xs ${selectedDate === dateStr ? 'text-[#c9a961]' : 'text-gray-500'}`}>
+                          {dayLabel}
+                        </p>
+                        <p className={`text-lg font-bold ${selectedDate === dateStr ? 'text-[#c9a961]' : 'text-[#1a1a2e] dark:text-white'}`}>
+                          {dayNum}
+                        </p>
+                        <p className={`text-xs ${selectedDate === dateStr ? 'text-[#c9a961]' : 'text-gray-400'}`}>
+                          {monthLabel}
+                        </p>
                       </button>
-                    ))}
+                    );
+                  })}
                 </div>
-              ) : (
-                <p className="text-red-500">Geen beschikbare tijden voor deze datum</p>
+              </div>
+
+              {/* Time slots */}
+              {selectedDate && slotsForSelectedDate.length > 0 && (
+                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+                  <h4 className="font-semibold text-[#1a1a2e] dark:text-white mb-3">
+                    <Clock className="w-4 h-4 inline-block mr-1 text-[#c9a961]" />
+                    Beschikbare tijden
+                  </h4>
+                  <div className="flex flex-wrap gap-2">
+                    {slotsForSelectedDate.map(slot => {
+                      const t = new Date(slot.start);
+                      const timeStr = t.toLocaleTimeString('nl-NL', { hour: '2-digit', minute: '2-digit' });
+                      const isSelected = selectedSlot?.start === slot.start;
+                      return (
+                        <button
+                          key={slot.start}
+                          onClick={() => handleSlotSelect(slot)}
+                          className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                            isSelected
+                              ? 'bg-[#c9a961] text-white'
+                              : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
+                          }`}
+                        >
+                          {timeStr}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </motion.div>
               )}
-            </motion.div>
+            </>
           )}
 
           <button
-            onClick={handleDateTimeConfirm}
-            disabled={!selectedDate || !selectedTime}
-            className="w-full mt-6 py-3 bg-[#c9a961] text-white font-semibold rounded-xl disabled:bg-gray-300 disabled:cursor-not-allowed hover:bg-[#b8944f] transition-colors"
+            onClick={handleDateTimeNext}
+            disabled={!selectedSlot}
+            className="w-full mt-6 py-3 bg-[#c9a961] text-white font-semibold rounded-xl disabled:bg-gray-300 dark:disabled:bg-gray-700 disabled:cursor-not-allowed hover:bg-[#b8944f] transition-colors"
           >
             Volgende
           </button>
         </motion.div>
       )}
 
-      {/* Step 3: Patient Details */}
+      {/* ========================================= */}
+      {/* STEP 4: PATIENT DETAILS                    */}
+      {/* ========================================= */}
       {step === 'details' && (
         <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }}>
           <button onClick={goBack} className="flex items-center gap-2 text-gray-500 hover:text-[#c9a961] mb-4">
@@ -371,7 +596,7 @@ export function ClinicMindsBooking() {
                 type="text"
                 value={formData.firstName}
                 onChange={e => setFormData(p => ({ ...p, firstName: e.target.value }))}
-                className="w-full px-4 py-3 bg-gray-50 dark:bg-[#0f0f1a] border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-[#c9a961]"
+                className="w-full px-4 py-3 bg-gray-50 dark:bg-[#0f0f1a] border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-[#c9a961] focus:outline-none"
                 placeholder="Voornaam"
               />
             </div>
@@ -381,7 +606,7 @@ export function ClinicMindsBooking() {
                 type="text"
                 value={formData.lastName}
                 onChange={e => setFormData(p => ({ ...p, lastName: e.target.value }))}
-                className="w-full px-4 py-3 bg-gray-50 dark:bg-[#0f0f1a] border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-[#c9a961]"
+                className="w-full px-4 py-3 bg-gray-50 dark:bg-[#0f0f1a] border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-[#c9a961] focus:outline-none"
                 placeholder="Achternaam"
               />
             </div>
@@ -396,7 +621,7 @@ export function ClinicMindsBooking() {
                 type="email"
                 value={formData.email}
                 onChange={e => setFormData(p => ({ ...p, email: e.target.value }))}
-                className="w-full px-4 py-3 bg-gray-50 dark:bg-[#0f0f1a] border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-[#c9a961]"
+                className="w-full px-4 py-3 bg-gray-50 dark:bg-[#0f0f1a] border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-[#c9a961] focus:outline-none"
                 placeholder="je@email.nl"
               />
             </div>
@@ -408,7 +633,7 @@ export function ClinicMindsBooking() {
                 type="tel"
                 value={formData.phone}
                 onChange={e => setFormData(p => ({ ...p, phone: e.target.value }))}
-                className="w-full px-4 py-3 bg-gray-50 dark:bg-[#0f0f1a] border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-[#c9a961]"
+                className="w-full px-4 py-3 bg-gray-50 dark:bg-[#0f0f1a] border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-[#c9a961] focus:outline-none"
                 placeholder="+31 6 12345678"
               />
             </div>
@@ -422,23 +647,25 @@ export function ClinicMindsBooking() {
               rows={3}
               value={formData.notes}
               onChange={e => setFormData(p => ({ ...p, notes: e.target.value }))}
-              className="w-full px-4 py-3 bg-gray-50 dark:bg-[#0f0f1a] border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-[#c9a961] resize-none"
+              className="w-full px-4 py-3 bg-gray-50 dark:bg-[#0f0f1a] border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-[#c9a961] focus:outline-none resize-none"
               placeholder="Speciale wensen of vragen..."
             />
           </div>
 
           <button
-            onClick={() => setStep('confirm')}
+            onClick={handleDetailsNext}
             disabled={!formData.firstName || !formData.lastName || !formData.email}
-            className="w-full py-3 bg-[#c9a961] text-white font-semibold rounded-xl disabled:bg-gray-300 disabled:cursor-not-allowed hover:bg-[#b8944f] transition-colors"
+            className="w-full py-3 bg-[#c9a961] text-white font-semibold rounded-xl disabled:bg-gray-300 dark:disabled:bg-gray-700 disabled:cursor-not-allowed hover:bg-[#b8944f] transition-colors"
           >
             Bevestig afspraak
           </button>
         </motion.div>
       )}
 
-      {/* Step 4: Confirm */}
-      {step === 'confirm' && selectedService && (
+      {/* ========================================= */}
+      {/* STEP 5: CONFIRMATION                       */}
+      {/* ========================================= */}
+      {step === 'confirm' && selectedSlot && (
         <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }}>
           <button onClick={goBack} className="flex items-center gap-2 text-gray-500 hover:text-[#c9a961] mb-4">
             <ChevronLeft className="w-4 h-4" /> Terug
@@ -449,26 +676,40 @@ export function ClinicMindsBooking() {
           <div className="bg-gray-50 dark:bg-[#0f0f1a] rounded-xl p-6 mb-6 space-y-4">
             <div className="flex justify-between">
               <span className="text-gray-500">Behandeling</span>
-              <span className="font-semibold text-[#1a1a2e] dark:text-white text-right">{selectedService.name}</span>
+              <span className="font-semibold text-[#1a1a2e] dark:text-white text-right">
+                {selectedServices.map(s => s.name).join(' + ')}
+              </span>
             </div>
+            {selectedAppointmentType && (
+              <div className="flex justify-between">
+                <span className="text-gray-500">Type</span>
+                <span className="font-semibold text-[#1a1a2e] dark:text-white">
+                  {getAppointmentTypeLabel(selectedAppointmentType)}
+                </span>
+              </div>
+            )}
             <div className="flex justify-between">
               <span className="text-gray-500">Datum</span>
               <span className="font-semibold text-[#1a1a2e] dark:text-white">
-                {new Date(selectedDate).toLocaleDateString('nl-NL', { weekday: 'long', day: 'numeric', month: 'long' })}
+                {new Date(selectedSlot.start).toLocaleDateString('nl-NL', { weekday: 'long', day: 'numeric', month: 'long' })}
               </span>
             </div>
             <div className="flex justify-between">
               <span className="text-gray-500">Tijd</span>
-              <span className="font-semibold text-[#1a1a2e] dark:text-white">{selectedTime}</span>
+              <span className="font-semibold text-[#1a1a2e] dark:text-white">
+                {new Date(selectedSlot.start).toLocaleTimeString('nl-NL', { hour: '2-digit', minute: '2-digit' })}
+                {' – '}
+                {new Date(selectedSlot.end).toLocaleTimeString('nl-NL', { hour: '2-digit', minute: '2-digit' })}
+              </span>
             </div>
-            <div className="flex justify-between">
-              <span className="text-gray-500">Duur</span>
-              <span className="font-semibold text-[#1a1a2e] dark:text-white">{formatDuration(selectedService.duration)}</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-gray-500">Prijs</span>
-              <span className="font-bold text-[#c9a961] text-xl">{formatPrice(selectedService.price)}</span>
-            </div>
+            {currentPrepayment !== null && currentPrepayment > 0 && (
+              <div className="flex justify-between border-t border-gray-200 dark:border-gray-700 pt-4">
+                <span className="text-gray-500 flex items-center gap-1">
+                  <CreditCard className="w-4 h-4" /> Aanbetaling
+                </span>
+                <span className="font-bold text-[#c9a961] text-xl">{formatPrice(currentPrepayment)}</span>
+              </div>
+            )}
             <div className="border-t border-gray-200 dark:border-gray-700 pt-4">
               <span className="text-gray-500">Naam</span>
               <p className="font-semibold text-[#1a1a2e] dark:text-white">{formData.firstName} {formData.lastName}</p>
@@ -480,16 +721,29 @@ export function ClinicMindsBooking() {
             </div>
           </div>
 
+          {currentPrepayment !== null && currentPrepayment > 0 && (
+            <div className="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-xl p-4 mb-6">
+              <div className="flex items-start gap-3">
+                <Info className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
+                <div>
+                  <p className="text-sm text-amber-800 dark:text-amber-300 font-medium">Aanbetaling vereist</p>
+                  <p className="text-xs text-amber-600 dark:text-amber-400 mt-1">
+                    Je wordt doorgestuurd naar ClinicMinds om de aanbetaling van {formatPrice(currentPrepayment)} te voldoen en je afspraak te bevestigen.
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
+
           <div className="space-y-3">
             <button
-              onClick={handleSubmit}
-              disabled={loading}
-              className="w-full py-4 bg-[#c9a961] text-white font-semibold rounded-xl flex items-center justify-center gap-2 hover:bg-[#b8944f] transition-colors disabled:opacity-50"
+              onClick={handleConfirmBooking}
+              className="w-full py-4 bg-[#c9a961] text-white font-semibold rounded-xl flex items-center justify-center gap-2 hover:bg-[#b8944f] transition-colors"
             >
-              {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Check className="w-5 h-5" />}
-              {loading ? 'Bezig met boeken...' : 'Bevestig boeking'}
+              <ExternalLink className="w-5 h-5" />
+              Boek via ClinicMinds
             </button>
-            
+
             <button
               onClick={handleWhatsAppFallback}
               className="w-full py-3 bg-green-500 text-white font-semibold rounded-xl flex items-center justify-center gap-2 hover:bg-green-600 transition-colors"
@@ -499,50 +753,18 @@ export function ClinicMindsBooking() {
             </button>
           </div>
 
+          <div className="flex justify-center mt-4">
+            <button
+              onClick={resetBooking}
+              className="text-sm text-gray-400 hover:text-[#c9a961] flex items-center gap-1"
+            >
+              <Sparkles className="w-3.5 h-3.5" /> Nieuwe afspraak starten
+            </button>
+          </div>
+
           <p className="text-xs text-gray-500 text-center mt-4">
             Door te boeken ga je akkoord met onze annuleringsvoorwaarden.
           </p>
-        </motion.div>
-      )}
-
-      {/* Step 5: Success */}
-      {step === 'success' && (
-        <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="text-center py-8">
-          <div className="w-20 h-20 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center mx-auto mb-6">
-            <Sparkles className="w-10 h-10 text-green-600" />
-          </div>
-          <h3 className="text-2xl font-bold text-[#1a1a2e] dark:text-white mb-2">Afspraak aangevraagd!</h3>
-          <p className="text-gray-500 mb-6">
-            We hebben je boekingsaanvraag ontvangen. Je ontvangt binnen 24 uur een bevestiging.
-          </p>
-          
-          {bookingResult?.bookingId && (
-            <p className="text-sm text-gray-400 mb-6">Boekingsnummer: {bookingResult.bookingId}</p>
-          )}
-
-          <div className="flex gap-3 justify-center">
-            <a
-              href={getClinicMindsBookingUrl()}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="px-6 py-3 bg-[#c9a961] text-white rounded-xl font-medium hover:bg-[#b8944f] transition-colors inline-flex items-center gap-2"
-            >
-              <ExternalLink className="w-4 h-4" />
-              Bekijk in ClinicMinds
-            </a>
-            <button
-              onClick={() => {
-                setStep('service');
-                setSelectedService(null);
-                setSelectedDate('');
-                setSelectedTime('');
-                setFormData({ firstName: '', lastName: '', email: '', phone: '', notes: '' });
-              }}
-              className="px-6 py-3 border border-gray-300 rounded-xl font-medium hover:bg-gray-50 transition-colors"
-            >
-              Nieuwe afspraak
-            </button>
-          </div>
         </motion.div>
       )}
     </div>

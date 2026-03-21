@@ -11,9 +11,9 @@ export function Contact() {
       {/* Hero */}
       <section className="py-24 bg-gradient-to-br from-[#faf8f5] via-white to-[#e8d5c4]/30 dark:from-[#0f0f1a] dark:via-[#1a1a2e] dark:to-[#1a1a2e]/50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div 
-            initial={{ opacity: 0, y: 30 }} 
-            animate={{ opacity: 1, y: 0 }} 
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
             className="text-center max-w-3xl mx-auto"
           >
             <span className="inline-block px-4 py-1.5 bg-[#c9a961]/10 text-[#c9a961] text-sm font-medium rounded-full mb-4">
@@ -33,17 +33,28 @@ export function Contact() {
       <section className="py-24 bg-white dark:bg-[#0f0f1a]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid lg:grid-cols-3 gap-12">
-            
-            {/* Left Sidebar - Contact Info */}
-            <div className="lg:col-span-1 space-y-6">
-              <motion.div 
-                initial={{ opacity: 0, x: -30 }} 
+
+            {/* Right Side - Booking Widget (shown first on mobile) */}
+            <div className="lg:col-span-2 order-1 lg:order-2">
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="bg-white dark:bg-[#1a1a2e] rounded-3xl p-4 sm:p-8 shadow-xl border border-gray-100 dark:border-gray-800"
+              >
+                <ClinicMindsBooking />
+              </motion.div>
+            </div>
+
+            {/* Left Sidebar - Contact Info (shown second on mobile) */}
+            <div className="lg:col-span-1 space-y-6 order-2 lg:order-1">
+              <motion.div
+                initial={{ opacity: 0, x: -30 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.2 }}
                 className="bg-gradient-to-br from-[#faf8f5] to-white dark:from-[#1a1a2e] dark:to-[#1a1a2e]/50 rounded-2xl p-6 shadow-lg"
               >
                 <h3 className="font-bold text-[#1a1a2e] dark:text-white mb-6">Contactgegevens</h3>
-                
+
                 <div className="space-y-5">
                   <div className="flex items-start gap-4">
                     <div className="w-10 h-10 bg-[#c9a961]/10 rounded-lg flex items-center justify-center flex-shrink-0">
@@ -51,7 +62,7 @@ export function Contact() {
                     </div>
                     <div>
                       <p className="font-medium text-[#1a1a2e] dark:text-white">Amsterdam</p>
-                      <p className="text-sm text-gray-500">Pieter Calandlaan 1193<br/>1069 SE Amsterdam</p>
+                      <p className="text-sm text-gray-500">Pieter Calandlaan 1193<br />1069 SE Amsterdam</p>
                     </div>
                   </div>
 
@@ -82,7 +93,7 @@ export function Contact() {
                     <div>
                       <p className="font-medium text-[#1a1a2e] dark:text-white">Openingstijden</p>
                       <p className="text-sm text-gray-500">
-                        Ma - Vr: 08:00 - 16:00<br/>
+                        Ma - Vr: 08:00 - 16:00<br />
                         Za - Zo: 09:00 - 17:00
                       </p>
                     </div>
@@ -101,8 +112,8 @@ export function Contact() {
               </motion.div>
 
               {/* FAQ Card */}
-              <motion.div 
-                initial={{ opacity: 0, x: -30 }} 
+              <motion.div
+                initial={{ opacity: 0, x: -30 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.3 }}
                 className="bg-white dark:bg-[#1a1a2e] rounded-2xl p-6 shadow-lg border border-gray-100 dark:border-gray-800"
@@ -122,17 +133,6 @@ export function Contact() {
                     <p className="text-gray-500">Meestal tussen 15-45 minuten.</p>
                   </div>
                 </div>
-              </motion.div>
-            </div>
-
-            {/* Right Side - Booking Widget */}
-            <div className="lg:col-span-2">
-              <motion.div 
-                initial={{ opacity: 0, y: 30 }} 
-                animate={{ opacity: 1, y: 0 }}
-                className="bg-white dark:bg-[#1a1a2e] rounded-3xl p-8 shadow-xl border border-gray-100 dark:border-gray-800"
-              >
-                <ClinicMindsBooking />
               </motion.div>
             </div>
           </div>

@@ -1,429 +1,290 @@
 /**
- * ClinicMinds Booking Integration
- * 
- * This service integrates with ClinicMinds online booking system
- * Endpoint: https://schedule.clinicminds.com/
- * 
- * Features:
- * - Fetch services from ClinicMinds API
- * - Check real-time availability
- * - Create bookings through their system
- * - Embedded widget alternative with custom styling
+ * ClinicMinds Booking Integration — Real GraphQL API
+ *
+ * Uses Vite proxy at /api/clinicminds to avoid CORS issues.
+ * In production, configure your hosting (Vercel/Netlify) to proxy
+ * /api/clinicminds/* → https://schedule.clinicminds.com/*
+ *
+ * Flow:
+ * 1. fetchServices()            → services grouped by category
+ * 2. fetchAppointmentTypes(id)  → CONSULTATION / CONSULTATION_TREATMENT / TREATMENT + fees
+ * 3. fetchAvailability(...)     → real time-slot data
  */
 
-const CLINICMINDS_CONFIG = {
-  baseUrl: 'https://schedule.clinicminds.com',
-  clinicId: import.meta.env.VITE_CLINICMINDS_CLINIC_ID || '',
+// ============================================
+// CONFIG (from .env)
+// ============================================
+
+const CM_CONFIG = {
+  // In dev: Vite proxy rewrites /api/clinicminds → https://schedule.clinicminds.com
+  // In production: configure your deployment to do the same proxy rewrite
+  get graphqlUrl() {
+    return `/api/clinicminds/graphql?l=${this.locale}`;
+  },
+  schedulerBaseUrl: 'https://schedule.clinicminds.com',
+  bearerToken: import.meta.env.VITE_CLINICMINDS_BEARER_TOKEN || '',
+  clinicUuid: import.meta.env.VITE_CLINICMINDS_CLINIC_ID || '',
+  locationUuid: import.meta.env.VITE_CLINICMINDS_LOCATION_UUID || '',
   locale: import.meta.env.VITE_CLINICMINDS_LOCALE || 'nl-NL',
-  currency: 'EUR',
 };
 
 // ============================================
 // TYPES
 // ============================================
 
-export interface ClinicMindsService {
-  id: string;
+export interface CMService {
+  id: number;
+  uuid: string;
   name: string;
-  description?: string;
-  duration: number; // in minutes
-  price: number;
-  currency: string;
-  category?: string;
-  requiresConsultation?: boolean;
-  imageUrl?: string;
-  color?: string;
+  group: string;
+  explanation: string;
+  orderPosition: number;
 }
 
-export interface ClinicMindsAvailability {
-  date: string;
-  available: boolean;
-  slots: {
-    time: string;
-    available: boolean;
-    practitioners?: string[];
-  }[];
-}
-
-export interface ClinicMindsPractitioner {
-  id: string;
+export interface CMServiceCategory {
   name: string;
-  title?: string;
-  imageUrl?: string;
-  bio?: string;
+  services: CMService[];
 }
 
-export interface BookingRequest {
-  serviceId: string;
-  date: string;
-  time: string;
-  practitionerId?: string;
-  patient: {
-    firstName: string;
-    lastName: string;
-    email: string;
-    phone: string;
-    notes?: string;
-  };
+export type AppointmentType = 'CONSULTATION' | 'CONSULTATION_TREATMENT' | 'TREATMENT';
+
+export interface CMAppointmentTypesResponse {
+  appointmentTypes: AppointmentType[];
+  consultationPrepaymentAmount: number | null;
+  consultationTreatmentPrepaymentAmount: number | null;
+  treatmentPrepaymentAmount: number | null;
 }
 
-export interface BookingResponse {
-  success: boolean;
-  bookingId?: string;
-  message: string;
-  confirmationUrl?: string;
-  error?: string;
+export interface CMAvailabilitySlot {
+  start: string; // ISO 8601
+  end: string;   // ISO 8601
+  preferred: boolean;
+}
+
+export interface CMLocation {
+  uuid: string;
+  name: string;
 }
 
 // ============================================
-// MOCK DATA (Based on Injection Queen's actual services)
-// In production, these would come from the ClinicMinds API
+// GRAPHQL HELPER
 // ============================================
 
-export const MOCK_SERVICES: ClinicMindsService[] = [
-  // Consultation
-  { 
-    id: 'consult-free', 
-    name: 'Gratis Consultatie', 
-    description: 'Vrijblijvend adviesgesprek om je wensen te bespreken',
-    duration: 30, 
-    price: 0, 
-    currency: 'EUR',
-    category: 'consultatie',
-    color: '#10b981'
-  },
-  
-  // Botox
-  { 
-    id: 'botox-zone1', 
-    name: 'Botox - 1 Zone', 
-    description: 'Voorhoofd, fronsrimpels of kraaienpootjes',
-    duration: 20, 
-    price: 119, 
-    currency: 'EUR',
-    category: 'botox',
-    color: '#c9a961'
-  },
-  { 
-    id: 'botox-zone2', 
-    name: 'Botox - 2 Zones', 
-    description: 'Combinatie van 2 zones',
-    duration: 30, 
-    price: 179, 
-    currency: 'EUR',
-    category: 'botox',
-    color: '#c9a961'
-  },
-  { 
-    id: 'botox-zone3', 
-    name: 'Botox - 3 Zones', 
-    description: 'Voorhoofd, frons en kraaienpootjes',
-    duration: 45, 
-    price: 269, 
-    currency: 'EUR',
-    category: 'botox',
-    color: '#c9a961'
-  },
-  { 
-    id: 'botox-lipflip', 
-    name: 'Lipflip', 
-    description: 'Subtiele lipverfijning met Botox',
-    duration: 15, 
-    price: 79, 
-    currency: 'EUR',
-    category: 'botox',
-    color: '#c9a961'
-  },
-  { 
-    id: 'botox-gummy', 
-    name: 'Gummy Smile', 
-    description: 'Minder tandvlees zichtbaar bij lachen',
-    duration: 15, 
-    price: 69, 
-    currency: 'EUR',
-    category: 'botox',
-    color: '#c9a961'
-  },
-  { 
-    id: 'botox-chin', 
-    name: 'Kin (putjes)', 
-    description: 'Verminderen van putjes in kin',
-    duration: 15, 
-    price: 69, 
-    currency: 'EUR',
-    category: 'botox',
-    color: '#c9a961'
-  },
-  { 
-    id: 'botox-slimming', 
-    name: 'Face Slimming', 
-    description: 'Slanker gelaat door masseter spieren',
-    duration: 30, 
-    price: 249, 
-    currency: 'EUR',
-    category: 'botox',
-    color: '#c9a961'
-  },
-  { 
-    id: 'botox-traptox', 
-    name: 'Traptox', 
-    description: 'Schouders ontspannen (Barbie Botox)',
-    duration: 45, 
-    price: 299, 
-    currency: 'EUR',
-    category: 'botox',
-    color: '#c9a961'
-  },
-  { 
-    id: 'botox-sweat', 
-    name: 'Overmatig Transpireren', 
-    description: 'Tegen overmatig zweten (oksels of handen)',
-    duration: 30, 
-    price: 319, 
-    currency: 'EUR',
-    category: 'botox',
-    color: '#c9a961'
-  },
-  { 
-    id: 'botox-migraine', 
-    name: 'Migraine Behandeling', 
-    description: 'Botox tegen migraine en hoofdpijn',
-    duration: 30, 
-    price: 299, 
-    currency: 'EUR',
-    category: 'botox',
-    color: '#c9a961'
-  },
-  
-  // Fillers
-  { 
-    id: 'filler-lips-05', 
-    name: 'Lipfillers 0.5ml', 
-    description: 'Natuurlijk volle lippen',
-    duration: 30, 
-    price: 249, 
-    currency: 'EUR',
-    category: 'fillers',
-    requiresConsultation: true,
-    color: '#ec4899'
-  },
-  { 
-    id: 'filler-lips-1', 
-    name: 'Lipfillers 1.0ml', 
-    description: 'Volle, zachte lippen',
-    duration: 45, 
-    price: 349, 
-    currency: 'EUR',
-    category: 'fillers',
-    requiresConsultation: true,
-    color: '#ec4899'
-  },
-  { 
-    id: 'filler-chin', 
-    name: 'Kin Filler', 
-    description: 'Definieerde kin voor mooi profiel',
-    duration: 45, 
-    price: 299, 
-    currency: 'EUR',
-    category: 'fillers',
-    requiresConsultation: true,
-    color: '#ec4899'
-  },
-  { 
-    id: 'filler-cheeks', 
-    name: 'Jukbeenderen', 
-    description: 'Hogere jukbeenderen',
-    duration: 45, 
-    price: 399, 
-    currency: 'EUR',
-    category: 'fillers',
-    requiresConsultation: true,
-    color: '#ec4899'
-  },
-  { 
-    id: 'filler-jawline', 
-    name: 'Kaaklijn', 
-    description: 'Definieerde kaaklijn',
-    duration: 60, 
-    price: 599, 
-    currency: 'EUR',
-    category: 'fillers',
-    requiresConsultation: true,
-    color: '#ec4899'
-  },
-  { 
-    id: 'filler-tear', 
-    name: 'Traangoot', 
-    description: 'Minder wallen onder ogen',
-    duration: 45, 
-    price: 349, 
-    currency: 'EUR',
-    category: 'fillers',
-    requiresConsultation: true,
-    color: '#ec4899'
-  },
-  { 
-    id: 'filler-nasolabial', 
-    name: 'Neuslippenplooi', 
-    description: 'Minder diepe plooien',
-    duration: 30, 
-    price: 249, 
-    currency: 'EUR',
-    category: 'fillers',
-    requiresConsultation: true,
-    color: '#ec4899'
-  },
-  
-  // Skin Treatments
-  { 
-    id: 'skin-boosters', 
-    name: 'Skinboosters', 
-    description: 'Hydratatie boost voor de huid',
-    duration: 45, 
-    price: 199, 
-    currency: 'EUR',
-    category: 'skin',
-    color: '#8b5cf6'
-  },
-  { 
-    id: 'skin-morpheus', 
-    name: 'Morpheus8', 
-    description: 'Huidverjonging met microneedling + RF',
-    duration: 60, 
-    price: 299, 
-    currency: 'EUR',
-    category: 'skin',
-    color: '#8b5cf6'
-  },
-  { 
-    id: 'skin-fat-dissolve', 
-    name: 'Fat Dissolving', 
-    description: 'Vet verminderen onder kin/wangen',
-    duration: 45, 
-    price: 149, 
-    currency: 'EUR',
-    category: 'skin',
-    color: '#8b5cf6'
-  },
-];
+async function gql<T>(query: string, variables: Record<string, unknown>): Promise<T> {
+  const res = await fetch(CM_CONFIG.graphqlUrl, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${CM_CONFIG.bearerToken}`,
+    },
+    body: JSON.stringify({ query, variables }),
+  });
+
+  if (!res.ok) {
+    throw new Error(`ClinicMinds API error: ${res.status} ${res.statusText}`);
+  }
+
+  const json = await res.json();
+
+  if (json.errors?.length) {
+    throw new Error(`GraphQL error: ${json.errors[0].message}`);
+  }
+
+  return json.data;
+}
+
+// ============================================
+// QUERIES
+// ============================================
+
+const SERVICES_QUERY = `
+  query ($uuid: ID!, $userId: Int) {
+    clinic(uuid: $uuid) {
+      services(userId: $userId) {
+        id
+        uuid
+        name
+        group
+        explanation
+        orderPosition
+      }
+      locations {
+        uuid
+        name
+      }
+    }
+  }
+`;
+
+const APPOINTMENT_TYPES_QUERY = `
+  query ($clinicUuid: ID!, $serviceId: Int!, $userId: Int, $withUser: Boolean!) {
+    availableAppointmentTypesForUser(serviceId: $serviceId, userId: $userId) @include(if: $withUser)
+    clinic(uuid: $clinicUuid) {
+      id
+      service(id: $serviceId) {
+        id
+        name
+        explanation
+      }
+      locations {
+        uuid
+        name
+        service(id: $serviceId) {
+          appointmentTypes
+          service {
+            consultationPrepaymentAmount
+            consultationTreatmentPrepaymentAmount
+            treatmentPrepaymentAmount
+          }
+          appointmentTypesNotBookable
+        }
+      }
+      currencyCode
+    }
+  }
+`;
+
+const AVAILABILITY_QUERY = `
+  query ($clinicUuid: ID!, $services: [SelectedServiceInput!]!, $locationUuid: ID!, $userId: Int) {
+    availability: availabilityForServices(
+      clinicUuid: $clinicUuid
+      services: $services
+      locationUuid: $locationUuid
+      userId: $userId
+    ) {
+      start
+      end
+      preferred
+    }
+    clinic(uuid: $clinicUuid) {
+      id
+      timezone
+    }
+  }
+`;
 
 // ============================================
 // API FUNCTIONS
 // ============================================
 
 /**
- * Fetch services from ClinicMinds
- * In production, this would call their actual API
+ * Fetch all services from ClinicMinds, grouped by category.
  */
-export async function fetchServices(): Promise<ClinicMindsService[]> {
-  // In production:
-  // const response = await fetch(
-  //   `${CLINICMINDS_CONFIG.baseUrl}/services?clinic=${CLINICMINDS_CONFIG.clinicId}&l=${CLINICMINDS_CONFIG.locale}`
-  // );
-  // return response.json();
-  
-  // For now, return mock data
-  await new Promise(resolve => setTimeout(resolve, 300));
-  return MOCK_SERVICES;
+export async function fetchServices(): Promise<{
+  categories: CMServiceCategory[];
+  locations: CMLocation[];
+}> {
+  const data = await gql<{
+    clinic: {
+      services: CMService[];
+      locations: CMLocation[];
+    };
+  }>(SERVICES_QUERY, { uuid: CM_CONFIG.clinicUuid, userId: null });
+
+  // Group services by their "group" field
+  const grouped: Record<string, CMService[]> = {};
+  for (const svc of data.clinic.services) {
+    const g = svc.group || 'Overig';
+    if (!grouped[g]) grouped[g] = [];
+    grouped[g].push(svc);
+  }
+
+  // Sort services within each group by orderPosition
+  const categories: CMServiceCategory[] = Object.entries(grouped).map(
+    ([name, services]) => ({
+      name,
+      services: services.sort((a, b) => a.orderPosition - b.orderPosition),
+    })
+  );
+
+  return { categories, locations: data.clinic.locations };
 }
 
 /**
- * Fetch available time slots for a specific date
+ * Fetch available appointment types & prepayment fees for a specific service.
+ */
+export async function fetchAppointmentTypes(
+  serviceId: number
+): Promise<CMAppointmentTypesResponse> {
+  const data = await gql<{
+    clinic: {
+      id: number;
+      service: { id: number; name: string; explanation: string };
+      locations: Array<{
+        uuid: string;
+        name: string;
+        service: {
+          appointmentTypes: AppointmentType[];
+          service: {
+            consultationPrepaymentAmount: number | null;
+            consultationTreatmentPrepaymentAmount: number | null;
+            treatmentPrepaymentAmount: number | null;
+          };
+          appointmentTypesNotBookable: AppointmentType[];
+        };
+      }>;
+      currencyCode: string;
+    };
+  }>(APPOINTMENT_TYPES_QUERY, {
+    clinicUuid: CM_CONFIG.clinicUuid,
+    serviceId,
+    userId: null,
+    withUser: false,
+  });
+
+  // Find the location that matches (or use the first one)
+  const loc = data.clinic.locations.find(l => l.uuid === CM_CONFIG.locationUuid)
+    || data.clinic.locations[0];
+
+  if (!loc?.service) {
+    throw new Error('No appointment types available for this service');
+  }
+
+  // Filter out non-bookable types
+  const bookableTypes = loc.service.appointmentTypes.filter(
+    t => !loc.service.appointmentTypesNotBookable.includes(t)
+  );
+
+  return {
+    appointmentTypes: bookableTypes,
+    consultationPrepaymentAmount:
+      loc.service.service.consultationPrepaymentAmount,
+    consultationTreatmentPrepaymentAmount:
+      loc.service.service.consultationTreatmentPrepaymentAmount,
+    treatmentPrepaymentAmount:
+      loc.service.service.treatmentPrepaymentAmount,
+  };
+}
+
+/**
+ * Fetch real-time availability for selected services at the clinic location.
  */
 export async function fetchAvailability(
-  date: string,
-  _serviceId: string
-): Promise<ClinicMindsAvailability> {
-  // In production:
-  // const response = await fetch(
-  //   `${CLINICMINDS_CONFIG.baseUrl}/availability?clinic=${CLINICMINDS_CONFIG.clinicId}&date=${date}&service=${serviceId}&l=${CLINICMINDS_CONFIG.locale}`
-  // );
-  // return response.json();
-  
-  // Generate realistic availability
-  await new Promise(resolve => setTimeout(resolve, 400));
-  
-  const dateObj = new Date(date);
-  const day = dateObj.getDay();
-  
-  // Closed on Sundays
-  if (day === 0) {
-    return { date, available: false, slots: [] };
-  }
-  
-  const isWeekend = day === 6;
-  const openHour = isWeekend ? 9 : 8;
-  const closeHour = isWeekend ? 17 : 16;
-  
-  const slots: ClinicMindsAvailability['slots'] = [];
-  
-  for (let hour = openHour; hour < closeHour; hour++) {
-    for (let min = 0; min < 60; min += 15) {
-      // Skip lunch break
-      if (hour === 12) continue;
-      
-      const time = `${hour.toString().padStart(2, '0')}:${min.toString().padStart(2, '0')}`;
-      
-      // Randomly make some slots unavailable
-      const isBooked = Math.random() < 0.3;
-      
-      slots.push({
-        time,
-        available: !isBooked,
-        practitioners: isBooked ? [] : ['Zainab Haidari'],
-      });
-    }
-  }
-  
-  return {
-    date,
-    available: true,
-    slots,
-  };
+  services: { serviceId: number; appointmentType: AppointmentType }[],
+  locationUuid?: string
+): Promise<CMAvailabilitySlot[]> {
+  const data = await gql<{
+    availability: CMAvailabilitySlot[];
+    clinic: { id: number; timezone: string };
+  }>(AVAILABILITY_QUERY, {
+    clinicUuid: CM_CONFIG.clinicUuid,
+    services,
+    locationUuid: locationUuid || CM_CONFIG.locationUuid,
+    userId: null,
+  });
+
+  return data.availability;
 }
 
-/**
- * Create a booking in ClinicMinds
- */
-export async function createBooking(
-  _request: BookingRequest
-): Promise<BookingResponse> {
-  // In production:
-  // const response = await fetch(
-  //   `${CLINICMINDS_CONFIG.baseUrl}/bookings?clinic=${CLINICMINDS_CONFIG.clinicId}`,
-  //   {
-  //     method: 'POST',
-  //     headers: { 'Content-Type': 'application/json' },
-  //     body: JSON.stringify(request),
-  //   }
-  // );
-  // return response.json();
-  
-  // Simulate API call
-  await new Promise(resolve => setTimeout(resolve, 800));
-  
-  // Simulate random failures (5% chance)
-  if (Math.random() < 0.05) {
-    return {
-      success: false,
-      message: 'Time slot no longer available',
-      error: 'CONFLICT',
-    };
-  }
-  
-  return {
-    success: true,
-    bookingId: `BK${Date.now()}`,
-    message: 'Booking confirmed',
-    confirmationUrl: `${CLINICMINDS_CONFIG.baseUrl}/confirmation/${Date.now()}`,
-  };
-}
+// ============================================
+// URL BUILDERS
+// ============================================
 
 /**
- * Get the direct ClinicMinds booking URL
+ * Build a direct ClinicMinds scheduler URL (for redirect after booking summary).
  */
-export function getClinicMindsBookingUrl(serviceId?: string): string {
-  let url = `${CLINICMINDS_CONFIG.baseUrl}/?clinic=${CLINICMINDS_CONFIG.clinicId}&l=${CLINICMINDS_CONFIG.locale}`;
+export function getClinicMindsBookingUrl(serviceId?: number): string {
+  let url = `${CM_CONFIG.schedulerBaseUrl}/services?clinic=${CM_CONFIG.clinicUuid}&l=${CM_CONFIG.locale}`;
   if (serviceId) {
     url += `&service=${serviceId}`;
   }
@@ -431,26 +292,24 @@ export function getClinicMindsBookingUrl(serviceId?: string): string {
 }
 
 /**
- * Generate WhatsApp fallback message
+ * Generate WhatsApp fallback booking message.
  */
 export function generateWhatsAppBooking(
-  service: ClinicMindsService,
+  serviceName: string,
   date: string,
   time: string,
   patientName: string
 ): string {
   const message = encodeURIComponent(
-    `Hallo Injection Queen!%0A%0A` +
-    `Ik wil graag een afspraak maken via jullie website:%0A%0A` +
-    `• Naam: ${patientName}%0A` +
-    `• Behandeling: ${service.name}%0A` +
-    `• Datum: ${date}%0A` +
-    `• Tijd: ${time}%0A` +
-    `• Prijs: ${formatPrice(service.price)}%0A` +
-    `• Duur: ${service.duration} min%0A` +
-    `%0AKunnen jullie deze bevestigen?`
+    `Hallo Injection Queen!\n\n` +
+    `Ik wil graag een afspraak maken via jullie website:\n\n` +
+    `• Naam: ${patientName}\n` +
+    `• Behandeling: ${serviceName}\n` +
+    `• Datum: ${date}\n` +
+    `• Tijd: ${time}\n` +
+    `\nKunnen jullie deze bevestigen?`
   );
-  
+
   return `https://wa.me/31638604547?text=${message}`;
 }
 
@@ -473,24 +332,35 @@ export function formatDuration(minutes: number): string {
   return mins > 0 ? `${hours}u ${mins}m` : `${hours}u`;
 }
 
-export function getCategoryLabel(category: string): string {
-  const labels: Record<string, string> = {
-    'consultatie': 'Consultatie',
-    'botox': 'Botox',
-    'fillers': 'Fillers',
-    'skin': 'Huid',
-    'other': 'Overige',
+/**
+ * Get a human-readable label for an appointment type.
+ */
+export function getAppointmentTypeLabel(type: AppointmentType): string {
+  const labels: Record<AppointmentType, string> = {
+    CONSULTATION: 'Consult',
+    CONSULTATION_TREATMENT: 'Consult + behandeling',
+    TREATMENT: 'Behandeling',
   };
-  return labels[category] || category;
+  return labels[type] || type;
 }
 
-export function getCategoryColor(category: string): string {
-  const colors: Record<string, string> = {
-    'consultatie': '#10b981',
-    'botox': '#c9a961',
-    'fillers': '#ec4899',
-    'skin': '#8b5cf6',
-    'other': '#6b7280',
-  };
-  return colors[category] || '#6b7280';
+/**
+ * Get the prepayment amount for a specific appointment type.
+ */
+export function getPrepaymentForType(
+  type: AppointmentType,
+  data: CMAppointmentTypesResponse
+): number | null {
+  switch (type) {
+    case 'CONSULTATION':
+      return data.consultationPrepaymentAmount;
+    case 'CONSULTATION_TREATMENT':
+      return data.consultationTreatmentPrepaymentAmount;
+    case 'TREATMENT':
+      return data.treatmentPrepaymentAmount;
+    default:
+      return null;
+  }
 }
+
+export { CM_CONFIG };
