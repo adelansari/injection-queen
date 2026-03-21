@@ -1,0 +1,12 @@
+{
+    "rewrites": [
+        {
+            "source": "/api/clinicminds/:path*",
+            "destination": "https://schedule.clinicminds.com/:path*"
+        },
+        {
+            "source": "/(.*)",
+            "destination": "/index.html"
+        }
+    ]
+}
