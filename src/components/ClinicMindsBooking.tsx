@@ -256,24 +256,24 @@ export function ClinicMindsBooking() {
   // ============================================
 
   return (
-    <div className="w-full max-w-4xl mx-auto">
+    <div className="w-full overflow-hidden">
       {/* Progress Steps */}
-      <div className="flex items-center justify-center mb-8">
+      <div className="flex items-center justify-center mb-6 sm:mb-8">
         {['Behandeling', 'Type', 'Datum & Tijd', 'Gegevens', 'Bevestig'].map((label, idx) => (
           <div key={label} className="flex items-center">
             <div className="flex flex-col items-center">
               <div className={`
-                w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium transition-colors
+                w-6 h-6 sm:w-8 sm:h-8 rounded-full flex items-center justify-center text-xs sm:text-sm font-medium transition-colors
                 ${idx === currentStepIdx ? 'bg-[#c9a961] text-white' :
                   idx < currentStepIdx ? 'bg-green-500 text-white' :
-                  'bg-gray-200 dark:bg-gray-700 text-gray-500'}
+                    'bg-gray-200 dark:bg-gray-700 text-gray-500'}
               `}>
-                {idx < currentStepIdx ? <Check className="w-4 h-4" /> : idx + 1}
+                {idx < currentStepIdx ? <Check className="w-3 h-3 sm:w-4 sm:h-4" /> : idx + 1}
               </div>
-              <span className="text-[10px] text-gray-400 mt-1 hidden sm:block">{label}</span>
+              <span className="text-[9px] sm:text-[10px] text-gray-400 mt-1 hidden sm:block">{label}</span>
             </div>
             {idx < 4 && (
-              <div className={`w-8 sm:w-12 h-0.5 mx-1 sm:mx-2 ${idx < currentStepIdx ? 'bg-green-500' : 'bg-gray-200 dark:bg-gray-700'}`} />
+              <div className={`w-5 sm:w-12 h-0.5 mx-0.5 sm:mx-2 ${idx < currentStepIdx ? 'bg-green-500' : 'bg-gray-200 dark:bg-gray-700'}`} />
             )}
           </div>
         ))}
@@ -300,8 +300,8 @@ export function ClinicMindsBooking() {
       {/* ========================================= */}
       {step === 'service' && (
         <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }}>
-          <h3 className="text-2xl font-bold text-[#1a1a2e] dark:text-white mb-2">Kies een behandeling</h3>
-          <p className="text-gray-500 mb-6">Selecteer de behandeling(en) die je wilt boeken</p>
+          <h3 className="text-xl sm:text-2xl font-bold text-[#1a1a2e] dark:text-white mb-2">Kies een behandeling</h3>
+          <p className="text-sm sm:text-base text-gray-500 mb-6">Selecteer de behandeling(en) die je wilt boeken</p>
 
           {loading ? (
             <div className="flex justify-center py-12">
@@ -340,22 +340,20 @@ export function ClinicMindsBooking() {
                               <button
                                 key={service.id}
                                 onClick={() => toggleServiceSelection(service)}
-                                className={`w-full flex items-center gap-3 p-3 rounded-lg text-left transition-all ${
-                                  isSelected
+                                className={`w-full flex items-center gap-2 sm:gap-3 p-2.5 sm:p-3 rounded-lg text-left transition-all ${isSelected
                                     ? 'bg-[#c9a961]/10 border-2 border-[#c9a961]'
                                     : 'bg-white dark:bg-[#0f0f1a] border-2 border-gray-100 dark:border-gray-800 hover:border-[#c9a961]/50'
-                                }`}
+                                  }`}
                               >
                                 {/* Checkbox */}
-                                <div className={`w-5 h-5 rounded flex-shrink-0 flex items-center justify-center border-2 transition-colors ${
-                                  isSelected ? 'bg-[#c9a961] border-[#c9a961]' : 'border-gray-300 dark:border-gray-600'
-                                }`}>
+                                <div className={`w-5 h-5 rounded flex-shrink-0 flex items-center justify-center border-2 transition-colors ${isSelected ? 'bg-[#c9a961] border-[#c9a961]' : 'border-gray-300 dark:border-gray-600'
+                                  }`}>
                                   {isSelected && <Check className="w-3 h-3 text-white" />}
                                 </div>
 
                                 {/* Service info */}
-                                <div className="flex-1 min-w-0">
-                                  <p className="font-medium text-[#1a1a2e] dark:text-white truncate">{service.name}</p>
+                                <div className="flex-1 min-w-0 overflow-hidden">
+                                  <p className="font-medium text-sm sm:text-base text-[#1a1a2e] dark:text-white break-words">{service.name}</p>
                                   {service.explanation && (
                                     <p className="text-xs text-gray-500 mt-0.5 truncate">{service.explanation}</p>
                                   )}
@@ -465,8 +463,8 @@ export function ClinicMindsBooking() {
           </button>
 
           {/* Selection summary */}
-          <div className="bg-[#c9a961]/10 rounded-xl p-4 mb-6">
-            <div className="flex justify-between items-start">
+          <div className="bg-[#c9a961]/10 rounded-xl p-3 sm:p-4 mb-6">
+            <div className="flex justify-between items-start gap-2">
               <div>
                 <p className="text-sm text-gray-500">Behandeling</p>
                 <p className="font-semibold text-[#1a1a2e] dark:text-white">
@@ -485,8 +483,8 @@ export function ClinicMindsBooking() {
             )}
           </div>
 
-          <h3 className="text-2xl font-bold text-[#1a1a2e] dark:text-white mb-2">
-            <Calendar className="w-6 h-6 inline-block mr-2 text-[#c9a961]" />
+          <h3 className="text-xl sm:text-2xl font-bold text-[#1a1a2e] dark:text-white mb-2">
+            <Calendar className="w-5 h-5 sm:w-6 sm:h-6 inline-block mr-1 sm:mr-2 text-[#c9a961]" />
             Kies een datum & tijd
           </h3>
 
@@ -502,8 +500,8 @@ export function ClinicMindsBooking() {
           ) : (
             <>
               {/* Date scroll */}
-              <div className="mb-6">
-                <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
+              <div className="mb-6 -mx-1">
+                <div className="flex gap-1.5 sm:gap-2 overflow-x-auto pb-2 px-1 scrollbar-hide">
                   {availableDates.map(dateStr => {
                     const d = new Date(dateStr + 'T12:00:00');
                     const dayLabel = d.toLocaleDateString('nl-NL', { weekday: 'short' });
@@ -513,19 +511,18 @@ export function ClinicMindsBooking() {
                       <button
                         key={dateStr}
                         onClick={() => { setSelectedDate(dateStr); setSelectedSlot(null); }}
-                        className={`flex-shrink-0 w-20 p-3 rounded-xl border-2 text-center transition-all ${
-                          selectedDate === dateStr
+                        className={`flex-shrink-0 w-16 sm:w-20 p-2 sm:p-3 rounded-xl border-2 text-center transition-all ${selectedDate === dateStr
                             ? 'border-[#c9a961] bg-[#c9a961]/10'
                             : 'border-gray-100 dark:border-gray-800 hover:border-[#c9a961]/50'
-                        }`}
+                          }`}
                       >
-                        <p className={`text-xs ${selectedDate === dateStr ? 'text-[#c9a961]' : 'text-gray-500'}`}>
+                        <p className={`text-[10px] sm:text-xs ${selectedDate === dateStr ? 'text-[#c9a961]' : 'text-gray-500'}`}>
                           {dayLabel}
                         </p>
-                        <p className={`text-lg font-bold ${selectedDate === dateStr ? 'text-[#c9a961]' : 'text-[#1a1a2e] dark:text-white'}`}>
+                        <p className={`text-base sm:text-lg font-bold ${selectedDate === dateStr ? 'text-[#c9a961]' : 'text-[#1a1a2e] dark:text-white'}`}>
                           {dayNum}
                         </p>
-                        <p className={`text-xs ${selectedDate === dateStr ? 'text-[#c9a961]' : 'text-gray-400'}`}>
+                        <p className={`text-[10px] sm:text-xs ${selectedDate === dateStr ? 'text-[#c9a961]' : 'text-gray-400'}`}>
                           {monthLabel}
                         </p>
                       </button>
@@ -541,7 +538,7 @@ export function ClinicMindsBooking() {
                     <Clock className="w-4 h-4 inline-block mr-1 text-[#c9a961]" />
                     Beschikbare tijden
                   </h4>
-                  <div className="flex flex-wrap gap-2">
+                  <div className="grid grid-cols-3 sm:grid-cols-4 md:flex md:flex-wrap gap-2">
                     {slotsForSelectedDate.map(slot => {
                       const t = new Date(slot.start);
                       const timeStr = t.toLocaleTimeString('nl-NL', { hour: '2-digit', minute: '2-digit' });
@@ -550,11 +547,10 @@ export function ClinicMindsBooking() {
                         <button
                           key={slot.start}
                           onClick={() => handleSlotSelect(slot)}
-                          className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-                            isSelected
+                          className={`px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-all text-center ${isSelected
                               ? 'bg-[#c9a961] text-white'
                               : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
-                          }`}
+                            }`}
                         >
                           {timeStr}
                         </button>
