@@ -32,14 +32,14 @@ export function Contact() {
       {/* Main Content */}
       <section className="py-24 bg-white dark:bg-[#0f0f1a]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid lg:grid-cols-3 gap-12">
+          <div className="grid lg:grid-cols-3 gap-8 lg:gap-12">
 
             {/* Right Side - Booking Widget (shown first on mobile) */}
-            <div className="lg:col-span-2 order-1 lg:order-2">
+            <div className="lg:col-span-2 order-1 lg:order-2 min-w-0">
               <motion.div
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="bg-white dark:bg-[#1a1a2e] rounded-3xl p-4 sm:p-8 shadow-xl border border-gray-100 dark:border-gray-800"
+                className="bg-white dark:bg-[#1a1a2e] rounded-3xl p-3 sm:p-8 shadow-xl border border-gray-100 dark:border-gray-800 overflow-hidden"
               >
                 <ClinicMindsBooking />
               </motion.div>
